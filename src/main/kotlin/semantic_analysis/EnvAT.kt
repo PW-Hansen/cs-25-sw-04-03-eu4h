@@ -1,6 +1,6 @@
-package org.sdfg610.dims.semantic_analysis
+package org.sw_08.eu4h.semantic_analysis
 
-import org.sdfg610.dims.abstract_syntax.*
+import org.sw_08.eu4h.abstract_syntax.*
 
 class EnvAT(
     private val parentScope: EnvAT? = null,

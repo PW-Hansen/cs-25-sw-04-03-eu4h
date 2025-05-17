@@ -1,4 +1,4 @@
-package org.sdfg610.dims.interpretation
+package org.sw_08.eu4h.interpretation
 
 sealed interface Val {
     fun asInt() : Int = (this as IntVal).n

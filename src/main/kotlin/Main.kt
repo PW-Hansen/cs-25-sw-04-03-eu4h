@@ -1,8 +1,8 @@
-package org.sdfg610.dims
+package org.sw_08.eu4h
 
-import org.sdfg610.dims.interpretation.*
-import org.sdfg610.dims.pretty_printing.PrettyPrinter
-import org.sdfg610.dims.semantic_analysis.*
+import org.sw_08.eu4h.interpretation.*
+import org.sw_08.eu4h.pretty_printing.PrettyPrinter
+import org.sw_08.eu4h.semantic_analysis.*
 import syntactic_analysis.*
 
 

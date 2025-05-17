@@ -1,7 +1,7 @@
-package org.sdfg610.dims.interpretation
+package org.sw_08.eu4h.interpretation
 
-import org.sdfg610.dims.abstract_syntax.*
-import org.sdfg610.dims.abstract_syntax.BoolV
+import org.sw_08.eu4h.abstract_syntax.*
+import org.sw_08.eu4h.abstract_syntax.BoolV
 
 class Interpreter {
     companion object {

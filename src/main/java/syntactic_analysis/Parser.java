@@ -1,6 +1,6 @@
 package syntactic_analysis;
 
-import org.sdfg610.dims.abstract_syntax.*;
+import org.sw_08.eu4h.abstract_syntax.*;
 import java.util.ArrayList;
 
 /* The required start of a Coco/R grammar file. "Program" specifies the starting symbol of the grammar. */

@@ -28,7 +28,7 @@ test {
 
 tasks.withType(Jar.class).configureEach {
     manifest {
-        attributes["Main-Class"] = "org.sdfg610.dims.MainKt"
+        attributes["Main-Class"] = "org.sw_08.eu4h.MainKt"
     }
     archiveFileName.set("eu4h.jar")
     from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }

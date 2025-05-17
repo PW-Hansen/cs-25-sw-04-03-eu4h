@@ -1,6 +1,6 @@
-package org.sdfg610.dims.interpretation
+package org.sw_08.eu4h.interpretation
 
-import org.sdfg610.dims.abstract_syntax.Var
+import org.sw_08.eu4h.abstract_syntax.Var
 
 class EnvV(
     private val parentScope: EnvV? = null,

@@ -1,6 +1,6 @@
-package org.sdfg610.dims.pretty_printing
+package org.sw_08.eu4h.pretty_printing
 
-import org.sdfg610.dims.abstract_syntax.*
+import org.sw_08.eu4h.abstract_syntax.*
 
 class PrettyPrinter {
     companion object {

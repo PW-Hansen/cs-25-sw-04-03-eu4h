@@ -1,7 +1,7 @@
-package org.sdfg610.dims.semantic_analysis
+package org.sw_08.eu4h.semantic_analysis
 
-import org.sdfg610.dims.abstract_syntax.*
-import org.sdfg610.dims.pretty_printing.PrettyPrinter
+import org.sw_08.eu4h.abstract_syntax.*
+import org.sw_08.eu4h.pretty_printing.PrettyPrinter
 
 
 class AssignAndTypeChecker {
