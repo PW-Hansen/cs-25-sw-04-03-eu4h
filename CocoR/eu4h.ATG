@@ -146,8 +146,8 @@ If<out Stmt stmt> =                  (. Stmt stmtElse = Skip.INSTANCE; .)
 
 While<out Stmt stmt> =
     "while"                              (. int lineNumber = t.line; .)
-    '(' Expr<out Expr cond> ')' "do" Stmts<out Stmt body>
-    "endwhile"                           (. stmt = new While(cond, body, lineNumber); .)
+    '(' Expr<out Expr cond> ')' "{" Stmts<out Stmt body>
+    "}"                           (. stmt = new While(cond, body, lineNumber); .)
 .
 
 /*------------------------------------------------------------------------*/

@@ -1,10 +1,10 @@
 int i = 4;
 bool b = true;
 
-while(b) do
+while(b) {
     print b;
     b = false;
-endwhile
+}
 
 print b; // assigned
 

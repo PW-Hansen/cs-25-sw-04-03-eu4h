@@ -246,8 +246,8 @@ class StartStates {
 public class Scanner {
 	static final char EOL = '\n';
 	static final int  eofSym = 0;
-	static final int maxT = 27;
-	static final int noSym = 27;
+	static final int maxT = 25;
+	static final int noSym = 25;
 
 
 	public Buffer buffer; // scanner buffer
@@ -294,12 +294,10 @@ public class Scanner {
 		literals.put("else", 11);
 		literals.put("endif", 12);
 		literals.put("while", 13);
-		literals.put("do", 14);
-		literals.put("endwhile", 15);
-		literals.put("int", 16);
-		literals.put("bool", 17);
-		literals.put("true", 25);
-		literals.put("false", 26);
+		literals.put("int", 14);
+		literals.put("bool", 15);
+		literals.put("true", 23);
+		literals.put("false", 24);
 
 	}
 	
@@ -460,21 +458,21 @@ public class Scanner {
 					if (ch == '|') {AddCh(); state = 10; break;}
 					else {state = 0; break;}
 				case 10:
-					{t.kind = 18; break loop;}
+					{t.kind = 16; break loop;}
 				case 11:
-					{t.kind = 19; break loop;}
+					{t.kind = 17; break loop;}
 				case 12:
-					{t.kind = 20; break loop;}
+					{t.kind = 18; break loop;}
 				case 13:
-					{t.kind = 21; break loop;}
+					{t.kind = 19; break loop;}
 				case 14:
-					{t.kind = 22; break loop;}
+					{t.kind = 20; break loop;}
 				case 15:
-					{t.kind = 23; break loop;}
+					{t.kind = 21; break loop;}
 				case 16:
-					recEnd = pos; recKind = 24;
+					recEnd = pos; recKind = 22;
 					if (ch == '=') {AddCh(); state = 11; break;}
-					else {t.kind = 24; break loop;}
+					else {t.kind = 22; break loop;}
 
 			}
 		}
