@@ -78,7 +78,7 @@ CHARACTERS
 TOKENS
   IDENT  = ('_' | letter) {letter | digit | '_'}.
   NUM = digit {digit}.
-  COUNTRY = '@' (letter ) (letter | digit) (letter | digit).
+  COUNTRY = '@' (letter) (letter | digit) (letter | digit).
   PROVINCE = '@' digit {digit}.
 
 COMMENTS FROM "/*" TO "*/" NESTED  /* Nested means: "There can be comments inside comments" */
