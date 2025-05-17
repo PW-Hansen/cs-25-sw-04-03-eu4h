@@ -6,6 +6,12 @@ while(b) {
     b = false;
 }
 
+country france = @FRA;
+print(france);
+
+province paris = @151;
+print(paris);
+
 print b; // assigned
 
 print i + i; // Assigned

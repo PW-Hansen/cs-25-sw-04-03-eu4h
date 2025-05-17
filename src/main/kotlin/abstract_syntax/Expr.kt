@@ -16,6 +16,9 @@ class BoolV(var value: Boolean, override val lineNumber: Int) : Expr
 
 class NumV(var value: Num, override val lineNumber: Int) : Expr
 
+class CountryV(val value: String, override val lineNumber: Int) : Expr
+
+class ProvinceV(val value: String, override val lineNumber: Int) : Expr
 
 enum class UnaryOperators {
     NOT, NEG

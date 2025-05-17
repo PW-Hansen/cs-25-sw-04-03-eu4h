@@ -6,3 +6,7 @@ sealed interface Type
 data object BoolT : Type
 
 data object IntT : Type
+
+data object CountryT : Type
+
+data object ProvinceT : Type

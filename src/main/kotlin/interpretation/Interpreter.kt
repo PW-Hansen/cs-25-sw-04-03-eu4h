@@ -1,7 +1,6 @@
 package org.sw_08.eu4h.interpretation
 
 import org.sw_08.eu4h.abstract_syntax.*
-import org.sw_08.eu4h.abstract_syntax.BoolV
 
 class Interpreter {
     companion object {
@@ -48,6 +47,8 @@ class Interpreter {
             return when (expr) {
                 is BoolV -> BoolVal(expr.value)
                 is NumV -> IntVal(expr.value)
+                is CountryV -> CountryVal(expr.value)
+                is ProvinceV -> ProvinceVal(expr.value)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 
                 is BinaryOp -> {

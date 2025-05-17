@@ -11,3 +11,21 @@ data class IntVal(val n: Int) : Val {
 data class BoolVal(val b: Boolean) : Val {
     override fun toString() = b.toString()
 }
+data class CountryVal(val country: String) : Val {
+    init {
+        require(country.matches(Regex("^@[A-Z][A-Z0-9]{2}$"))) { 
+            "Country code must be @ followed by 1 alphabetical character, then 2 alphanumerical characters. All alphabetical characters must be uppercase." 
+        }
+    }
+
+    override fun toString() = country
+}
+data class ProvinceVal(val province: String) : Val {
+    init {
+        require(province.matches(Regex("^@[0-9][0-9]*$"))) { 
+            "Province code must be @ followed by at least 1 digit." 
+        }
+    }
+
+    override fun toString() = province
+}

@@ -34,6 +34,8 @@ class PrettyPrinter {
                 is Ref -> expr.name
                 is BoolV -> expr.value.toString()
                 is NumV -> expr.value.toString()
+                is CountryV -> expr.value.toString()
+                is ProvinceV -> expr.value.toString()
             }
 
         fun printType(type: Type?): String =
@@ -41,6 +43,8 @@ class PrettyPrinter {
                 null -> ""
                 BoolT -> "bool"
                 IntT -> "int"
+                CountryT -> "country"
+                ProvinceT -> "province"
             }
 
 
