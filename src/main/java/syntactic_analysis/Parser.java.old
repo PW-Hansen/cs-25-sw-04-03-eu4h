@@ -10,7 +10,7 @@ public class Parser {
 	public static final int _EOF = 0;
 	public static final int _IDENT = 1;
 	public static final int _NUM = 2;
-	public static final int maxT = 25;
+	public static final int maxT = 27;
 
 	static final boolean _T = true;
 	static final boolean _x = false;
@@ -153,7 +153,7 @@ public class Parser {
 	Stmt  Stmt() {
 		Stmt  stmt;
 		stmt = Skip.INSTANCE; 
-		if (la.kind == 14 || la.kind == 15) {
+		if (la.kind == 16 || la.kind == 17) {
 			stmt = Declaration();
 		} else if (la.kind == 1) {
 			stmt = Assignment();
@@ -163,7 +163,7 @@ public class Parser {
 			stmt = If();
 		} else if (la.kind == 13) {
 			stmt = While();
-		} else SynErr(26);
+		} else SynErr(28);
 		return stmt;
 	}
 
@@ -232,9 +232,9 @@ public class Parser {
 		Expect(7);
 		Expr cond = Expr();
 		Expect(8);
-		Expect(9);
+		Expect(14);
 		Stmt body = Stmts();
-		Expect(10);
+		Expect(15);
 		stmt = new While(cond, body, lineNumber); 
 		return stmt;
 	}
@@ -242,20 +242,20 @@ public class Parser {
 	Type  Type() {
 		Type  type;
 		type = null; 
-		if (la.kind == 14) {
+		if (la.kind == 16) {
 			Get();
 			type = IntT.INSTANCE; 
-		} else if (la.kind == 15) {
+		} else if (la.kind == 17) {
 			Get();
 			type = BoolT.INSTANCE; 
-		} else SynErr(27);
+		} else SynErr(29);
 		return type;
 	}
 
 	Expr  Expr() {
 		Expr  expr;
 		expr = EqExpr();
-		while (la.kind == 16) {
+		while (la.kind == 18) {
 			Get();
 			int lineNumber = t.line; 
 			Expr expr2 = EqExpr();
@@ -268,7 +268,7 @@ public class Parser {
 		Expr  expr;
 		String op = null; int lineNumber = -1; 
 		expr = RelExpr();
-		while (la.kind == 3 || la.kind == 17) {
+		while (la.kind == 3 || la.kind == 19) {
 			if (la.kind == 3) {
 				Get();
 				op = "="; lineNumber = t.line; 
@@ -285,7 +285,7 @@ public class Parser {
 	Expr  RelExpr() {
 		Expr  expr;
 		expr = PlusExpr();
-		while (la.kind == 18) {
+		while (la.kind == 20) {
 			Get();
 			int lineNumber = t.line; 
 			Expr expr2 = PlusExpr();
@@ -298,8 +298,8 @@ public class Parser {
 		Expr  expr;
 		BinaryOperators op = BinaryOperators.ADD; int lineNumber = -1; 
 		expr = MultExpr();
-		while (la.kind == 19 || la.kind == 20) {
-			if (la.kind == 19) {
+		while (la.kind == 21 || la.kind == 22) {
+			if (la.kind == 21) {
 				Get();
 				op = BinaryOperators.ADD; lineNumber = t.line; 
 			} else {
@@ -315,7 +315,7 @@ public class Parser {
 	Expr  MultExpr() {
 		Expr  expr;
 		expr = NotExpr();
-		while (la.kind == 21) {
+		while (la.kind == 23) {
 			Get();
 			int lineNumber = t.line; 
 			Expr expr2 = NotExpr();
@@ -327,8 +327,8 @@ public class Parser {
 	Expr  NotExpr() {
 		Expr  expr;
 		ArrayList<Character> unaries = new ArrayList(); int lineNumber = -1; 
-		while (la.kind == 20 || la.kind == 22) {
-			if (la.kind == 22) {
+		while (la.kind == 22 || la.kind == 24) {
+			if (la.kind == 24) {
 				Get();
 				unaries.add('!'); lineNumber = t.line; 
 			} else {
@@ -350,17 +350,17 @@ public class Parser {
 		} else if (la.kind == 2) {
 			Get();
 			expr = new NumV(Integer.parseInt(t.val), t.line);  
-		} else if (la.kind == 23) {
+		} else if (la.kind == 25) {
 			Get();
 			expr = new BoolV(true, t.line);  
-		} else if (la.kind == 24) {
+		} else if (la.kind == 26) {
 			Get();
 			expr = new BoolV(false, t.line); 
 		} else if (la.kind == 7) {
 			Get();
 			expr = Expr();
 			Expect(8);
-		} else SynErr(28);
+		} else SynErr(30);
 		return expr;
 	}
 
@@ -377,8 +377,8 @@ public class Parser {
 	}
 
 	private static final boolean[][] set = {
-		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x},
-		{_x,_T,_x,_x, _x,_T,_T,_x, _x,_x,_x,_x, _x,_T,_T,_T, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x}
+		{_T,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x},
+		{_x,_T,_x,_x, _x,_T,_T,_x, _x,_x,_x,_x, _x,_T,_x,_x, _T,_T,_x,_x, _x,_x,_x,_x, _x,_x,_x,_x, _x}
 
 	};
 } // end Parser
@@ -417,21 +417,23 @@ class Errors {
 			case 11: s = "\"else\" expected"; break;
 			case 12: s = "\"endif\" expected"; break;
 			case 13: s = "\"while\" expected"; break;
-			case 14: s = "\"int\" expected"; break;
-			case 15: s = "\"bool\" expected"; break;
-			case 16: s = "\"||\" expected"; break;
-			case 17: s = "\"!=\" expected"; break;
-			case 18: s = "\"<\" expected"; break;
-			case 19: s = "\"+\" expected"; break;
-			case 20: s = "\"-\" expected"; break;
-			case 21: s = "\"*\" expected"; break;
-			case 22: s = "\"!\" expected"; break;
-			case 23: s = "\"true\" expected"; break;
-			case 24: s = "\"false\" expected"; break;
-			case 25: s = "??? expected"; break;
-			case 26: s = "invalid Stmt"; break;
-			case 27: s = "invalid Type"; break;
-			case 28: s = "invalid Term"; break;
+			case 14: s = "\"do\" expected"; break;
+			case 15: s = "\"endwhile\" expected"; break;
+			case 16: s = "\"int\" expected"; break;
+			case 17: s = "\"bool\" expected"; break;
+			case 18: s = "\"||\" expected"; break;
+			case 19: s = "\"!=\" expected"; break;
+			case 20: s = "\"<\" expected"; break;
+			case 21: s = "\"+\" expected"; break;
+			case 22: s = "\"-\" expected"; break;
+			case 23: s = "\"*\" expected"; break;
+			case 24: s = "\"!\" expected"; break;
+			case 25: s = "\"true\" expected"; break;
+			case 26: s = "\"false\" expected"; break;
+			case 27: s = "??? expected"; break;
+			case 28: s = "invalid Stmt"; break;
+			case 29: s = "invalid Type"; break;
+			case 30: s = "invalid Term"; break;
 			default: s = "error " + n; break;
 		}
 		printMsg(line, col, s);
