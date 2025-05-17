@@ -1,0 +1,11 @@
+int i = 4;
+bool b = true;
+
+while(b) do
+    print b;
+    b = false;
+endwhile
+
+print b; // assigned
+
+print i + i; // Assigned
