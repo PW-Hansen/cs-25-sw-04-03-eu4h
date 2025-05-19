@@ -17,8 +17,8 @@ data class StringVal(val s: String) : Val {
 }
 data class CountryVal(val country: String) : Val {
     init {
-        require(country.matches(Regex("^@[A-Z][A-Z0-9]{2}$"))) { 
-            "Country must be @ followed by 1 alphabetical character, then 2 alphanumerical characters. All alphabetical characters must be uppercase." 
+        require(country.matches(Regex("^[A-Z][A-Z0-9]{2}$"))) { 
+            "Country must be 1 alphabetical character, then 2 alphanumerical characters. All alphabetical characters must be uppercase." 
         }
     }
 
@@ -26,8 +26,8 @@ data class CountryVal(val country: String) : Val {
 }
 data class ProvinceVal(val province: String) : Val {
     init {
-        require(province.matches(Regex("^@[0-9][0-9]*$"))) { 
-            "Province must be @ followed by at least 1 digit." 
+        require(province.matches(Regex("^[0-9][0-9]*$"))) { 
+            "Province must only be composed of digits, and cannot be blank." 
         }
     }
 
@@ -35,8 +35,8 @@ data class ProvinceVal(val province: String) : Val {
 }
 data class MissionVal(val mission: String) : Val {
     init {
-        require(mission.matches(Regex("^@\"[A-Za-z0-9_]+\"$"))) {
-            "Mission must be @ followed by any number of alphanumerical chars or underscores." 
+        require(mission.matches(Regex("[A-Za-z0-9_]+"))) {
+            "Mission must be any number of alphanumerical chars or underscores." 
         }
     }
 
