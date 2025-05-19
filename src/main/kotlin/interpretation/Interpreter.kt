@@ -50,7 +50,7 @@ class Interpreter {
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
-                is MissionV -> MissionVal(expr.value)
+                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.effects)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 
                 is BinaryOp -> {

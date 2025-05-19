@@ -33,12 +33,13 @@ data class ProvinceVal(val province: String) : Val {
 
     override fun toString() = province
 }
-data class MissionVal(val mission: String) : Val {
-    init {
-        require(mission.matches(Regex("[A-Za-z0-9_]+"))) {
-            "Mission must be any number of alphanumerical chars or underscores." 
-        }
-    }
-
-    override fun toString() = mission
+data class MissionVal(
+    val name: String,
+    val position: Int,
+    val icon: String,
+    val triggers: String,
+    val effects: String
+) : Val {
+    override fun toString(): String =
+        "Mission(name='$name', position=$position, icon='$icon', triggers='$triggers', effects='$effects')"
 }

@@ -37,7 +37,7 @@ class PrettyPrinter {
                 is StringV -> expr.value.toString()
                 is CountryV -> expr.value.toString()
                 is ProvinceV -> expr.value.toString()
-                is MissionV -> expr.value.toString()
+                is MissionV -> "Mission(${expr.name}, ${expr.position}, ${expr.icon}, ${expr.triggers}, ${expr.effects})"
             }
 
         fun printType(type: Type?): String =
