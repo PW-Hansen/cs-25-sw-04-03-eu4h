@@ -14,6 +14,9 @@ data class IntVal(val n: Int) : Val {
 data class BoolVal(val b: Boolean) : Val {
     override fun toString() = b.toString()
 }
+data class DoubleVal(val d: Double) : Val {
+    override fun toString() = d.toString()
+}
 data class StringVal(val s: String) : Val {
     override fun toString() = s.toString()
 }

@@ -86,6 +86,7 @@ class Interpreter {
             return when (expr) {
                 is BoolV -> BoolVal(expr.value)
                 is NumV -> IntVal(expr.value)
+                is DoubleV -> DoubleVal(expr.value)
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)

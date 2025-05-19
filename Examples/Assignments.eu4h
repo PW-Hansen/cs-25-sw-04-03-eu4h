@@ -1,5 +1,6 @@
 int i = 4;
 bool b = true;
+double x = 3.14;
 
 while(b) {
     print b;
@@ -24,6 +25,8 @@ print(my_other_mission);
 print b; // assigned
 
 print i + i; // Assigned
+
+print x;
 
 create_trigger = (country, "army_size", country);
 assign_trigger = (my_mission, "army_size", @FRA);

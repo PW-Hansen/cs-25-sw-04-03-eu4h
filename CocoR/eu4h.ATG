@@ -79,6 +79,7 @@ CHARACTERS
 TOKENS
   IDENT  = ('_' | letter) {letter | digit | '_'}.
   NUM = digit {digit}.
+  DOUBLE = digit {digit} '.' digit {digit}.
   STRING = '"' { strch } '"' .
   COUNTRY = '@' (letter) (letter | digit) (letter | digit).
   PROVINCE = '@' digit {digit}.
@@ -161,6 +162,7 @@ While<out Stmt stmt> =
 Type<out Type type>   (. type = null; .)
     = "int"           (. type = IntT.INSTANCE; .)
     | "bool"          (. type = BoolT.INSTANCE; .)
+    | "double"        (. type = DoubleT.INSTANCE; .)
     | "string"        (. type = StringT.INSTANCE; .)
     | "country"       (. type = CountryT.INSTANCE; .)
     | "province"      (. type = ProvinceT.INSTANCE; .)
@@ -258,6 +260,7 @@ AssignTriggerStmt<out Stmt stmt> =
 Term<out Expr expr>           (. expr = null; .)
     = IDENT                   (. expr = new Ref(t.val, t.line);  .)
     | NUM                     (. expr = new NumV(Integer.parseInt(t.val), t.line);  .)
+    | DOUBLE                  (. expr = new DoubleV(Double.parseDouble(t.val), t.line); .)
     | STRING                  (. expr = new StringV(t.val.substring(1, t.val.length()-1), t.line); .)
     | COUNTRY                 (. expr = new CountryV(t.val.substring(1, t.val.length()), t.line);  .)
     | PROVINCE                (. expr = new ProvinceV(t.val.substring(1, t.val.length()), t.line);  .)

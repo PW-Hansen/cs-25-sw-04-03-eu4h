@@ -9,6 +9,8 @@ data object IntT : Type
 
 data object StringT : Type
 
+data object DoubleT : Type
+
 data object CountryT : Type
 
 data object ProvinceT : Type

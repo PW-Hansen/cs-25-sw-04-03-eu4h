@@ -16,6 +16,8 @@ class BoolV(var value: Boolean, override val lineNumber: Int) : Expr
 
 class NumV(var value: Num, override val lineNumber: Int) : Expr
 
+class DoubleV(var value: Double, override val lineNumber: Int) : Expr
+
 class StringV(var value: String, override val lineNumber: Int) : Expr
 
 class CountryV(val value: String, override val lineNumber: Int) : Expr
