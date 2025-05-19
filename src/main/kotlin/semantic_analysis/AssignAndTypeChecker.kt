@@ -81,6 +81,7 @@ class AssignAndTypeChecker {
             is NumV -> IntT
             is CountryV -> CountryT
             is ProvinceV -> ProvinceT
+            is MissionV -> MissionT
             is Ref -> {
                 val at = envAT.tryGet(expr.name)
 

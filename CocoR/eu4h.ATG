@@ -80,6 +80,7 @@ TOKENS
   NUM = digit {digit}.
   COUNTRY = '@' (letter) (letter | digit) (letter | digit).
   PROVINCE = '@' digit {digit}.
+  MISSION = '@' '"' (letter | digit | '_') {letter | digit | '_'} '"' .
 
 COMMENTS FROM "/*" TO "*/" NESTED  /* Nested means: "There can be comments inside comments" */
 COMMENTS FROM "//" TO lf
@@ -158,6 +159,7 @@ Type<out Type type>   (. type = null; .)
     | "bool"          (. type = BoolT.INSTANCE; .)
     | "country"       (. type = CountryT.INSTANCE; .)
     | "province"      (. type = ProvinceT.INSTANCE; .)
+    | "mission"       (. type = MissionT.INSTANCE; .)
     .
 
 /*------------------------------------------------------------------------*/
@@ -209,6 +211,7 @@ Term<out Expr expr>           (. expr = null; .)
     | NUM                     (. expr = new NumV(Integer.parseInt(t.val), t.line);  .)
     | COUNTRY                 (. expr = new CountryV(t.val, t.line);  .)
     | PROVINCE                (. expr = new ProvinceV(t.val, t.line);  .)
+    | MISSION                 (. expr = new MissionV(t.val, t.line);  .)
     | "true"                  (. expr = new BoolV(true, t.line);  .)
     | "false"                 (. expr = new BoolV(false, t.line); .)
     | '(' Expr<out expr> ')'

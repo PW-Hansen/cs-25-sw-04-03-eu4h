@@ -14,7 +14,7 @@ data class BoolVal(val b: Boolean) : Val {
 data class CountryVal(val country: String) : Val {
     init {
         require(country.matches(Regex("^@[A-Z][A-Z0-9]{2}$"))) { 
-            "Country code must be @ followed by 1 alphabetical character, then 2 alphanumerical characters. All alphabetical characters must be uppercase." 
+            "Country must be @ followed by 1 alphabetical character, then 2 alphanumerical characters. All alphabetical characters must be uppercase." 
         }
     }
 
@@ -23,9 +23,18 @@ data class CountryVal(val country: String) : Val {
 data class ProvinceVal(val province: String) : Val {
     init {
         require(province.matches(Regex("^@[0-9][0-9]*$"))) { 
-            "Province code must be @ followed by at least 1 digit." 
+            "Province must be @ followed by at least 1 digit." 
         }
     }
 
     override fun toString() = province
+}
+data class MissionVal(val mission: String) : Val {
+    init {
+        require(mission.matches(Regex("^@\"[A-Za-z0-9_]+\"$"))) {
+            "Mission must be @ followed by any number of alphanumerical chars or underscores." 
+        }
+    }
+
+    override fun toString() = mission
 }

@@ -20,6 +20,8 @@ class CountryV(val value: String, override val lineNumber: Int) : Expr
 
 class ProvinceV(val value: String, override val lineNumber: Int) : Expr
 
+class MissionV(val value: String, override val lineNumber: Int) : Expr
+
 enum class UnaryOperators {
     NOT, NEG
 }

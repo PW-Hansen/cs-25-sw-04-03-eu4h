@@ -36,6 +36,7 @@ class PrettyPrinter {
                 is NumV -> expr.value.toString()
                 is CountryV -> expr.value.toString()
                 is ProvinceV -> expr.value.toString()
+                is MissionV -> expr.value.toString()
             }
 
         fun printType(type: Type?): String =
@@ -45,6 +46,7 @@ class PrettyPrinter {
                 IntT -> "int"
                 CountryT -> "country"
                 ProvinceT -> "province"
+                MissionT -> "mission"
             }
 
 

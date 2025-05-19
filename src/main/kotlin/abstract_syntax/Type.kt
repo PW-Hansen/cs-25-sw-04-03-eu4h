@@ -10,3 +10,5 @@ data object IntT : Type
 data object CountryT : Type
 
 data object ProvinceT : Type
+
+data object MissionT : Type

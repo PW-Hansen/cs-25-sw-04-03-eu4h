@@ -12,6 +12,9 @@ print(france);
 province paris = @151;
 print(paris);
 
+mission mymission = @"this_is_my_mission";
+print(mymission);
+
 print b; // assigned
 
 print i + i; // Assigned
