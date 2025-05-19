@@ -5,6 +5,7 @@ import org.sw_08.eu4h.abstract_syntax.Type
 sealed interface Val {
     fun asInt() : Int = (this as IntVal).n
     fun asBool() : Boolean = (this as BoolVal).b
+    fun asDouble() : Double = (this as DoubleVal).d
     fun asString() : String = (this as StringVal).s
 }
 
