@@ -24,6 +24,18 @@ class PrettyPrinter {
                         printStmt(stmt.body, depth + 1)
                     ) + "\n" + indent(depth) + "endwhile\n"
                 }
+                is CreateTrigger -> indent(depth) +
+                    "create_trigger = (" +
+                    stmt.scope + ", " +
+                    "\"" + stmt.name + "\", " +
+                    printType(stmt.type) +
+                    ");"
+                is AssignTrigger -> indent(depth) +
+                    "assign_trigger = (" +
+                    stmt.missionName + ", " +
+                    "\"" + stmt.triggerName + "\", " +
+                    printExpr(stmt.expr) +
+                    ");"
             }
 
         fun printExpr(expr: Expr?): String =

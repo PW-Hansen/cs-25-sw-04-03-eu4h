@@ -24,3 +24,7 @@ class Print(var value: Expr?, override val lineNumber: Int) : Stmt
 class If(var condition: Expr?, var thenBody: Stmt?, var elseBody: Stmt?, override val lineNumber: Int) : Stmt
 
 class While(var condition: Expr?, var body: Stmt?, override val lineNumber: Int) : Stmt
+
+data class CreateTrigger(val scope: String, val name: String, val type: Type, override val lineNumber: Int) : Stmt
+
+data class AssignTrigger(val missionName: String, val triggerName: String, val expr: Expr, override val lineNumber: Int) : Stmt

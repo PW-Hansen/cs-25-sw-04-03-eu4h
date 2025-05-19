@@ -1,5 +1,7 @@
 package org.sw_08.eu4h.interpretation
 
+import org.sw_08.eu4h.abstract_syntax.Type
+
 sealed interface Val {
     fun asInt() : Int = (this as IntVal).n
     fun asBool() : Boolean = (this as BoolVal).b
@@ -43,3 +45,7 @@ data class MissionVal(
     override fun toString(): String =
         "Mission(name='$name', position=$position, icon='$icon', triggers='$triggers', effects='$effects')"
 }
+data class TriggerDef(
+    val scope: String, // TODO, should be country, province, or dual
+    val type: Type
+)

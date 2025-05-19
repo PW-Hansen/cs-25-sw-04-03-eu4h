@@ -2,8 +2,23 @@ package org.sw_08.eu4h.interpretation
 
 import org.sw_08.eu4h.abstract_syntax.*
 
+fun typeMatches(type: Type, value: Val): Boolean {
+    return when (type) {
+        is IntT -> value is IntVal
+        is BoolT -> value is BoolVal
+        is StringT -> value is StringVal
+        is CountryT -> value is CountryVal
+        is ProvinceT -> value is ProvinceVal
+        is MissionT -> value is MissionVal
+        else -> false
+    }
+}
+
 class Interpreter {
     companion object {
+        val missions: MutableMap<String, MissionVal> = mutableMapOf()
+        val triggers: MutableMap<String, TriggerDef> = mutableMapOf()
+
         fun evalStmt(stmt: Stmt, envV: EnvV): Unit {
             when (stmt) {
                 Skip -> { /* Nothing to do here */ }
@@ -15,6 +30,11 @@ class Interpreter {
                 is Assign -> {
                     val value = evalExpr(stmt.value!!, envV)
                     envV.set(stmt.identifier!!, value)
+                    if (value is MissionVal) {
+                        // TODO discuss whether only identifier should be added to the map.
+                        missions[stmt.identifier!!] = value
+                        missions[value.name] = value
+                    }
                 }
 
                 is Comp -> {
@@ -39,6 +59,25 @@ class Interpreter {
                         evalStmt(stmt.body!!, envV)
                         condition = evalExpr(stmt.condition!!, envV)
                     }
+                }
+
+                is CreateTrigger -> {
+                    if (triggers.containsKey(stmt.name)) {
+                        error("Trigger '${stmt.name}' already exists.")
+                    }
+                    triggers[stmt.name] = TriggerDef(stmt.scope, stmt.type)
+                }
+
+                is AssignTrigger -> {
+                    val trigger = triggers[stmt.triggerName] ?: error("Trigger '${stmt.triggerName}' not found.")
+                    val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
+                    val value = evalExpr(stmt.expr, envV)
+                    // Type check
+                    if (!typeMatches(trigger.type, value)) {
+                        error("Type mismatch: trigger '${stmt.triggerName}' expects ${trigger.type}, got ${value::class.simpleName}")
+                    }
+                    // TODO, scope compatibility check
+                    // TODO, applying trigger to mission
                 }
             }
         }

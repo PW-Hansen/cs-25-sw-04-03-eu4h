@@ -9,6 +9,9 @@ class AssignAndTypeChecker {
 
     val hasErrors get() = errors.isNotEmpty()
 
+    // Keeps track of what types are permitted for triggers.
+    private val triggerTypes = mutableMapOf<String, Type>()
+
 
     constructor(stmt: Stmt, envAT: EnvAT) {
         stmtT(stmt, envAT)
@@ -71,6 +74,24 @@ class AssignAndTypeChecker {
 
                 // The body gets its own scope. Also, the scope is cloned since neither assignments nor declarations propagate out of a while-loop.
                 stmtT(stmt.body!!, envAT.clone().newScope())
+            }
+
+            is CreateTrigger -> {
+                if (triggerTypes.containsKey(stmt.name)) {
+                    errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.name}' is already defined.")
+                } else {
+                    triggerTypes[stmt.name] = stmt.type
+                }
+            }
+
+            is AssignTrigger -> {
+                val exprType = exprT(stmt.expr, envAT)
+                val expectedType = triggerTypes[stmt.triggerName]
+                if (expectedType == null) {
+                    errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.triggerName}' is not defined.")
+                } else if (exprType != null && exprType.javaClass != expectedType.javaClass) {
+                    errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.triggerName}' expects type '${PrettyPrinter.printType(expectedType)}', but got '${PrettyPrinter.printType(exprType)}'.")
+                }
             }
         }
     }

@@ -108,7 +108,9 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.INSTANCE; .)
     | Print<out stmt>
     | If<out stmt>
     //| For<out stmt>
-    | While<out stmt> )
+    | While<out stmt> 
+    | CreateTriggerStmt<out stmt>
+    | AssignTriggerStmt<out stmt> )
 .
 
 Declaration<out Stmt stmt> =
@@ -223,6 +225,34 @@ MissionLit<out Expr expr>
         if (position == -1) position = 1;
         expr = new MissionV(name, position, icon, triggers, effects, t.line);
       .)
+.
+
+/* Scope definitions. */
+ScopeDef<out String scope>
+    (. scope = null; .)
+    =
+      "country"   (. scope = "country"; .)
+    | "province"  (. scope = "province"; .)
+    | "dual"      (. scope = "dual"; .)
+.
+
+/* Trigger creation and setting. */
+CreateTriggerStmt<out Stmt stmt> =
+    "create_trigger" '=' '('
+        ScopeDef<out String scope> ',' 
+        STRING     (. String triggerName = t.val.substring(1, t.val.length()-1); .) ',' 
+        Type<out Type type>
+    ')' ';'
+    (. stmt = new CreateTrigger(scope, triggerName, type, t.line); .)
+.
+
+AssignTriggerStmt<out Stmt stmt> =
+    "assign_trigger" '=' '('
+        IDENT      (. String missionName = t.val; .) ',' 
+        STRING     (. String triggerName = t.val.substring(1, t.val.length()-1); .) ',' 
+        Expr<out Expr expr>
+    ')' ';'
+    (. stmt = new AssignTrigger(missionName, triggerName, expr, t.line); .)
 .
 
 Term<out Expr expr>           (. expr = null; .)

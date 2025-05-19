@@ -24,3 +24,6 @@ print(my_other_mission);
 print b; // assigned
 
 print i + i; // Assigned
+
+create_trigger = (country, "army_size", country);
+assign_trigger = (my_mission, "army_size", @FRA);
