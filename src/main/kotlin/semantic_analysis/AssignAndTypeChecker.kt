@@ -79,6 +79,7 @@ class AssignAndTypeChecker {
         return when (expr) {
             is BoolV -> BoolT
             is NumV -> IntT
+            is StringV -> StringT
             is CountryV -> CountryT
             is ProvinceV -> ProvinceT
             is MissionV -> MissionT

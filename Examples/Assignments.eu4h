@@ -6,6 +6,9 @@ while(b) {
     b = false;
 }
 
+string test = "test";
+print(test);
+
 country france = @FRA;
 print(france);
 

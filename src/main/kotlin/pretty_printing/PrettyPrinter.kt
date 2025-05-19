@@ -34,6 +34,7 @@ class PrettyPrinter {
                 is Ref -> expr.name
                 is BoolV -> expr.value.toString()
                 is NumV -> expr.value.toString()
+                is StringV -> expr.value.toString()
                 is CountryV -> expr.value.toString()
                 is ProvinceV -> expr.value.toString()
                 is MissionV -> expr.value.toString()
@@ -44,6 +45,7 @@ class PrettyPrinter {
                 null -> ""
                 BoolT -> "bool"
                 IntT -> "int"
+                StringT -> "string"
                 CountryT -> "country"
                 ProvinceT -> "province"
                 MissionT -> "mission"

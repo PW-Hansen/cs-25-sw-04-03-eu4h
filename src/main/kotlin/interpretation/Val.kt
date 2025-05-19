@@ -3,6 +3,7 @@ package org.sw_08.eu4h.interpretation
 sealed interface Val {
     fun asInt() : Int = (this as IntVal).n
     fun asBool() : Boolean = (this as BoolVal).b
+    fun asString() : String = (this as StringVal).s
 }
 
 data class IntVal(val n: Int) : Val {
@@ -10,6 +11,9 @@ data class IntVal(val n: Int) : Val {
 }
 data class BoolVal(val b: Boolean) : Val {
     override fun toString() = b.toString()
+}
+data class StringVal(val s: String) : Val {
+    override fun toString() = s.toString()
 }
 data class CountryVal(val country: String) : Val {
     init {

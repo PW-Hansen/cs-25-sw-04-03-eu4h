@@ -7,6 +7,8 @@ data object BoolT : Type
 
 data object IntT : Type
 
+data object StringT : Type
+
 data object CountryT : Type
 
 data object ProvinceT : Type
