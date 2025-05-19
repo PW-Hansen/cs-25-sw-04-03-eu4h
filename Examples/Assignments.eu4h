@@ -32,6 +32,3 @@ print i + i; // Assigned
 create_trigger = (province, "artillery_in_province", int);
 assign_trigger = (my_mission, "artillery_in_province", 10);
 print x;
-
-create_trigger = (province, "artillery_in_province", int);
-assign_trigger = (my_mission, "artillery_in_province", 10);
