@@ -1,6 +1,7 @@
 package org.sw_08.eu4h.pretty_printing
 
 import org.sw_08.eu4h.abstract_syntax.*
+import org.sw_08.eu4h.interpretation.MissionVal
 
 class PrettyPrinter {
     companion object {
@@ -90,5 +91,26 @@ class PrettyPrinter {
                 "(${printExpr(expr)})"
             else
                 printExpr(expr)
+
+        fun printMissionBlock(mission: MissionVal): String {
+            return """
+            ${mission.name} = {
+                position = ${mission.position}
+                icon = ${mission.icon}
+
+                required_missions =  {
+                }
+
+                provinces_to_highlight = {
+                }
+
+                trigger = {
+                }
+
+                effect = {
+                }
+            }
+        """.trimIndent()
+        }
     }
 }

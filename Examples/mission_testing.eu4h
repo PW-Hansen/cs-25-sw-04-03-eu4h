@@ -1,0 +1,11 @@
+country france = @FRA;
+
+province paris = @151;
+
+mission my_mission = @ "this_is_my_mission" 3;
+
+create_trigger = (province, "artillery_in_province", int);
+assign_trigger = (my_mission, "artillery_in_province", 10);
+
+print(my_mission);
+

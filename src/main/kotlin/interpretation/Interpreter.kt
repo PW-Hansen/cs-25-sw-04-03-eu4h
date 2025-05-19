@@ -1,5 +1,5 @@
 package org.sw_08.eu4h.interpretation
-
+import org.sw_08.eu4h.pretty_printing.PrettyPrinter
 import org.sw_08.eu4h.abstract_syntax.*
 
 fun typeMatches(type: Type, value: Val): Boolean {
@@ -24,7 +24,11 @@ class Interpreter {
                 Skip -> { /* Nothing to do here */ }
                 is Print -> {
                     val value = evalExpr(stmt.value!!, envV)
-                    println(value.toString())
+                    if (value is MissionVal) {
+                        println(PrettyPrinter.printMissionBlock(value))
+                    } else {
+                        println(value.toString())
+                    }
                 }
 
                 is Assign -> {
