@@ -121,7 +121,17 @@ class AssignAndTypeChecker {
                 val typeR = exprT(expr.exprRight, envAT)
 
                 when (expr.op) {
-                    BinaryOperators.ADD,
+                    BinaryOperators.ADD -> {
+                        if (typeL != null && typeR != null) {
+                            if (typeL is IntT && typeR is IntT) {
+                                // Accepted
+                            } else if (typeL is StringT && typeR is StringT) {
+                                // Accepted
+                            } else {
+                                errors.add("Line ${expr.lineNumber}: Operator '+' expected operands of the same type (int or string), but got '${PrettyPrinter.printType(typeL)}' and '${PrettyPrinter.printType(typeR)}'.")
+                            }
+                        }
+                    }
                     BinaryOperators.SUB,
                     BinaryOperators.MUL,
                     BinaryOperators.LT -> {
@@ -143,7 +153,12 @@ class AssignAndTypeChecker {
                 }
 
                 return when (expr.op) {
-                    BinaryOperators.ADD, BinaryOperators.SUB, BinaryOperators.MUL -> IntT
+                    BinaryOperators.ADD -> {
+                        if (typeL is IntT && typeR is IntT) { IntT }
+                        else if (typeL is StringT && typeR is StringT)  { StringT }
+                        else { null }
+                    }
+                    BinaryOperators.SUB, BinaryOperators.MUL -> IntT
                     BinaryOperators.LT, BinaryOperators.EQ, BinaryOperators.OR -> BoolT
                 }
             }

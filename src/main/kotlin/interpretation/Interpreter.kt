@@ -98,7 +98,15 @@ class Interpreter {
                     val v2 = evalExpr(expr.exprRight, envV)
 
                     return when (expr.op) {
-                        BinaryOperators.ADD -> IntVal(v1.asInt() + v2.asInt())
+                        BinaryOperators.ADD -> {
+                            if (v1 is StringVal && v2 is StringVal) {
+                                StringVal(v1.asString() + v2.asString())
+                            } else if (v1 is IntVal && v2 is IntVal) {
+                                IntVal(v1.asInt() + v2.asInt())
+                            } else {
+                                error("Cannot add ${v1::class.simpleName} and ${v2::class.simpleName}")
+                            }
+                        }
                         BinaryOperators.SUB -> IntVal(v1.asInt() - v2.asInt())
                         BinaryOperators.MUL -> IntVal(v1.asInt() * v2.asInt())
                         BinaryOperators.LT -> BoolVal(v1.asInt() < v2.asInt())

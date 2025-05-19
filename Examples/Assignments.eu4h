@@ -10,6 +10,9 @@ while(b) {
 string test = "test";
 print(test);
 
+test = test + "ing for concatenation";
+print(test);
+
 country france = @FRA;
 print(france);
 
