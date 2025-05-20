@@ -33,6 +33,8 @@ data class MissionV(
     override val lineNumber: Int
 ) : Expr
 
+class FieldAccess(val base: Expr, val field: String, override val lineNumber: Int) : Expr
+
 enum class UnaryOperators {
     NOT, NEG
 }

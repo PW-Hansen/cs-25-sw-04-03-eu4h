@@ -32,12 +32,32 @@ class Interpreter {
                 }
 
                 is Assign -> {
-                    val value = evalExpr(stmt.value!!, envV)
-                    envV.set(stmt.identifier!!, value)
-                    if (value is MissionVal) {
-                        // TODO discuss whether only identifier should be added to the map.
-                        missions[stmt.identifier!!] = value
-                        missions[value.name] = value
+                    val value = evalExpr(stmt.value, envV)
+                    when (val lhs = stmt.lhs) {
+                        is Ref -> {
+                            envV.set(lhs.name, value)
+                            if (value is MissionVal) {
+                                // TODO discuss whether only identifier should be added to the map.
+                                missions[lhs.name] = value
+                                missions[value.name] = value
+                            }
+                        }
+                        is FieldAccess -> {
+                            val baseVal = evalExpr(lhs.base, envV)
+                            if (baseVal is MissionVal) {
+                                when (lhs.field) {
+                                    "name" -> baseVal.name = value.asString()
+                                    "position" -> baseVal.position = value.asInt()
+                                    "icon" -> baseVal.icon = value.asString()
+                                    "triggers" -> baseVal.triggers = value.asString()
+                                    "effects" -> baseVal.effects = value.asString()
+                                    else -> error("Unknown field '${lhs.field}' for mission")
+                                }
+                            } else {
+                                error("Field assignment on non-mission value")
+                            }
+                        }
+                        else -> error("Invalid assignment target")
                     }
                 }
 
@@ -116,6 +136,22 @@ class Interpreter {
                         BinaryOperators.LT -> BoolVal(v1.asInt() < v2.asInt())
                         BinaryOperators.EQ -> BoolVal(v1 == v2) // IntVal and BoolVal are "data classes" and auto-generate "equals" based on member-values.
                         BinaryOperators.OR -> BoolVal(v1.asBool() || v2.asBool())
+                    }
+                }
+
+                is FieldAccess -> {
+                    val baseVal = evalExpr(expr.base, envV)
+                    if (baseVal is MissionVal) {
+                        when (expr.field) {
+                            "name" -> StringVal(baseVal.name)
+                            "position" -> IntVal(baseVal.position)
+                            "icon" -> StringVal(baseVal.icon)
+                            "triggers" -> StringVal(baseVal.triggers)
+                            "effects" -> StringVal(baseVal.effects)
+                            else -> error("Unknown field '${expr.field}' for mission")
+                        }
+                    } else {
+                        error("Field access on non-mission value")
                     }
                 }
 

@@ -40,11 +40,11 @@ data class ProvinceVal(val province: String) : Val {
     override fun toString() = province
 }
 data class MissionVal(
-    val name: String,
-    val position: Int,
-    val icon: String,
-    val triggers: String,
-    val effects: String
+    var name: String,
+    var position: Int,
+    var icon: String,
+    var triggers: String,
+    var effects: String
 ) : Val {
     override fun toString(): String =
         "Mission(name='$name', position=$position, icon='$icon', triggers='$triggers', effects='$effects')"

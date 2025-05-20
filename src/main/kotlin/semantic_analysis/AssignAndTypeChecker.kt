@@ -29,14 +29,37 @@ class AssignAndTypeChecker {
             is Print -> exprT(stmt.value!!, envAT) // Anything is fine as long as the value-expression is well-formed.
 
             is Assign -> {
-                val exprType = exprT(stmt.value!!, envAT)  // "!!"  ==>  "trust me bro, it is not null". Will never be null when parsing has no errors.
-                val at = envAT.tryGet(stmt.identifier!!)
-                at?.isAssigned = true
-
-                if (at == null)
-                    errors.add("Line ${stmt.lineNumber}: Assignment to undeclared variable '${stmt.identifier!!}'")
-                else if (exprType != null && exprType.javaClass != at.type.javaClass)
-                    errors.add("Line ${stmt.lineNumber}: Assignment has variable with type '${PrettyPrinter.printType(at.type)}' but expression with type '${PrettyPrinter.printType(exprType)}'.")
+                val exprType = exprT(stmt.value, envAT)
+                when (val lhs = stmt.lhs) {
+                    is Ref -> {
+                        val at = envAT.tryGet(lhs.name)
+                        if (at == null)
+                            errors.add("Line ${stmt.lineNumber}: Assignment to undeclared variable '${lhs.name}'")
+                        else {
+                            at.isAssigned = true
+                            if (exprType != null && exprType.javaClass != at.type.javaClass)
+                                errors.add("Line ${stmt.lineNumber}: Assignment has variable with type '${PrettyPrinter.printType(at.type)}' but expression with type '${PrettyPrinter.printType(exprType)}'.")
+                        }
+                    }
+                    is FieldAccess -> {
+                        val baseType = exprT(lhs.base, envAT)
+                        if (baseType !is MissionT) {
+                            errors.add("Line ${stmt.lineNumber}: Field assignment on non-mission value '${PrettyPrinter.printType(baseType)}'.")
+                        } else {
+                            val fieldType = when (lhs.field) {
+                                "name", "icon", "triggers", "effects" -> StringT
+                                "position" -> IntT
+                                else -> {
+                                    errors.add("Line ${stmt.lineNumber}: Unknown field '${lhs.field}' for mission.")
+                                    null
+                                }
+                            }
+                            if (exprType != null && fieldType != null && exprType.javaClass != fieldType.javaClass)
+                                errors.add("Line ${stmt.lineNumber}: Assignment to field '${lhs.field}' expects type '${PrettyPrinter.printType(fieldType)}', but got '${PrettyPrinter.printType(exprType)}'.")
+                        }
+                    }
+                    else -> errors.add("Line ${stmt.lineNumber}: Invalid assignment target.")
+                }
             }
 
             is Comp -> {
@@ -105,6 +128,21 @@ class AssignAndTypeChecker {
             is CountryV -> CountryT
             is ProvinceV -> ProvinceT
             is MissionV -> MissionT
+
+            is FieldAccess -> {
+                val baseType = exprT(expr.base, envAT)
+                if (baseType != null && baseType !is MissionT)
+                    errors.add("Line ${expr.lineNumber}: Field access on non-mission value '${PrettyPrinter.printType(baseType)}'.")
+                return when (expr.field) {
+                    "name" -> StringT
+                    "position" -> IntT
+                    "icon" -> StringT
+                    "triggers" -> StringT
+                    "effects" -> StringT
+                    else -> error("Unknown field '${expr.field}' for mission")
+                }
+            }
+
             is Ref -> {
                 val at = envAT.tryGet(expr.name)
 

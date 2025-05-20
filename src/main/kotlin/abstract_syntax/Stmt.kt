@@ -17,7 +17,7 @@ class Comp(var stmt1: Stmt?, var stmt2: Stmt?) : Stmt {
 
 class Declaration(var type: Type?, var identifier: Var?, override val lineNumber: Int) : Stmt
 
-class Assign(var identifier: Var?, var value: Expr?, override val lineNumber: Int) : Stmt
+class Assign(var lhs: Expr, var value: Expr, override val lineNumber: Int) : Stmt
 
 class Print(var value: Expr?, override val lineNumber: Int) : Stmt
 

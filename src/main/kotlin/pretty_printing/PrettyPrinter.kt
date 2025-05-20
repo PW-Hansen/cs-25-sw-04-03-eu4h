@@ -9,8 +9,8 @@ class PrettyPrinter {
             when(stmt) {
                 null, Skip     -> ""
                 is Comp        -> printStmt(stmt.stmt1, depth) + "\n" + printStmt(stmt.stmt2, depth)
-                is Declaration -> indent(depth) + printType(stmt.type) + " " + stmt.identifier + ";"
-                is Assign      -> indent(depth) + stmt.identifier + " := " + printExpr(stmt.value) + ";"
+                is Declaration -> indent(depth) + printType(stmt.type) + " " + (stmt.identifier ?: "") + ";"
+                is Assign      -> indent(depth) + printExpr(stmt.lhs) + " = " + printExpr(stmt.value) + ";"
                 is Print       -> indent(depth) + "print " + printExpr(stmt.value) + ";"
                 is If          -> {
                     indent(depth) + "if (" + printExpr(stmt.condition) + ") then \n" + printStmt(stmt.thenBody, depth + 1) + "\n" + (
@@ -52,6 +52,7 @@ class PrettyPrinter {
                 is CountryV -> expr.value.toString()
                 is ProvinceV -> expr.value.toString()
                 is MissionV -> "Mission(${expr.name}, ${expr.position}, ${expr.icon}, ${expr.triggers}, ${expr.effects})"
+                is FieldAccess -> printExpr(expr.base) + "." + expr.field
             }
 
         fun printType(type: Type?): String =
