@@ -101,7 +101,12 @@ class Interpreter {
                         error("Type mismatch: trigger '${stmt.triggerName}' expects ${trigger.type}, got ${value::class.simpleName}")
                     }
                     // TODO, scope compatibility check
-                    // TODO, applying trigger to mission
+                    val triggerAssignment = "\t\t${stmt.triggerName} = ${value}"
+                    if (mission.triggers == "") {
+                        mission.triggers = triggerAssignment
+                    } else {
+                        mission.triggers += "\n$triggerAssignment"
+                    }
                 }
             }
         }
