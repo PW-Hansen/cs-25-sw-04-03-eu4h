@@ -95,22 +95,24 @@ class PrettyPrinter {
         fun printMissionBlock(mission: MissionVal): String {
             return """
             ${mission.name} = {
-                position = ${mission.position}
-                icon = ${mission.icon}
+            \tposition = ${mission.position}
+            \ticon = ${mission.icon}
 
-                required_missions =  {
-                }
+            \trequired_missions =  {
+            \t}
 
-                provinces_to_highlight = {
-                }
+            \tprovinces_to_highlight = {
+            \t}
 
-                trigger = {
-                }
+            \ttrigger = {
+            ${mission.triggers}
+            \t}
 
-                effect = {
-                }
+            \teffect = {
+            ${mission.effects}
+            \t}
             }
-        """.trimIndent()
+        """.trimIndent().replace("\\t", "\t")
         }
     }
 }
