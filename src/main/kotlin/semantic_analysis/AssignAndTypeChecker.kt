@@ -116,6 +116,19 @@ class AssignAndTypeChecker {
                     errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.triggerName}' expects type '${PrettyPrinter.printType(expectedType)}', but got '${PrettyPrinter.printType(exprType)}'.")
                 }
             }
+
+            is OpenScope -> {
+                val varInfo = envAT.tryGet(stmt.scope)
+                if (varInfo == null) {
+                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' is not defined.")
+                } else if (varInfo.type != CountryT && varInfo.type != ProvinceT) {
+                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' must be either country or province.")
+                }
+            }
+
+            is CloseScope -> {
+                // No checks required here.
+            }
         }
     }
 

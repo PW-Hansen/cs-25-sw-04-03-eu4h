@@ -55,6 +55,18 @@ class PrettyPrinter {
                     "\"" + stmt.triggerName + "\", " +
                     printExpr(stmt.expr) +
                     ");"
+                
+                is OpenScope -> indent(depth) +
+                    "open_scope = (" +
+                    stmt.missionName + ", " +
+                    "\"" + stmt.spaceName + "\", " +
+                    stmt.scope +
+                    ");"
+                is CloseScope -> indent(depth) +
+                    "close_scope = (" +
+                    stmt.missionName + ", " +
+                    "\"" + stmt.spaceName + "\"" +
+                    ");"
             }
 
         fun printExpr(expr: Expr?): String =
