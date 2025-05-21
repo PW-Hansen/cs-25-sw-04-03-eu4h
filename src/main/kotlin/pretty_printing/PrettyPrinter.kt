@@ -3,6 +3,24 @@ package org.sw_08.eu4h.pretty_printing
 import org.sw_08.eu4h.abstract_syntax.*
 import org.sw_08.eu4h.interpretation.MissionVal
 
+fun autoIndent(block: String, baseIndent: String = "\t"): String {
+    val lines = block.lines()
+    val result = StringBuilder()
+    var indentLevel = 0
+    for (rawLine in lines) {
+        val line = rawLine.trimEnd().trimIndent()
+        // Decrease indent before lines ending with }
+        val trimmed = line.trimStart()
+        if (trimmed.startsWith("}")) {
+            indentLevel = (indentLevel - 1).coerceAtLeast(0)
+        }
+        result.append(baseIndent.repeat(indentLevel)).append(line).append("\n")
+        // Increase indent after lines ending with {
+        if (trimmed.endsWith("{")) indentLevel++
+    }
+    return result.toString().trimEnd()
+}
+
 class PrettyPrinter {
     companion object {
         fun printStmt(stmt: Stmt?, depth: Int = 0): String =
@@ -94,26 +112,27 @@ class PrettyPrinter {
                 printExpr(expr)
 
         fun printMissionBlock(mission: MissionVal): String {
-            return """
-            ${mission.name} = {
-            \tposition = ${mission.position}
-            \ticon = ${mission.icon}
+            val raw = """
+                ${mission.name} = {
+                position = ${mission.position}
+                icon = ${mission.icon}
 
-            \trequired_missions =  {
-            \t}
+                required_missions =  {
+                }
 
-            \tprovinces_to_highlight = {
-            \t}
+                provinces_to_highlight = {
+                }
 
-            \ttrigger = {
-            ${mission.triggers}
-            \t}
+                trigger = {
+                ${mission.triggers}
+                }
 
-            \teffect = {
-            ${mission.effects}
-            \t}
-            }
-        """.trimIndent().replace("\\t", "\t")
+                effect = {
+                ${mission.effects}
+                }
+                }
+            """.trimIndent()
+            return autoIndent(raw)
         }
     }
 }
