@@ -180,6 +180,8 @@ class Interpreter {
                 }
 
                 is CloseScope -> {
+                    /*  TODO needs logic for handling the trigger_scope changing when scopes are closed.
+                        Needs to use arrays for that. */ 
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     when (stmt.spaceName) {
                         "trigger" -> mission.triggerScope = ""
