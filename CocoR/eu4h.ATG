@@ -84,7 +84,6 @@ TOKENS
   COUNTRY = '@' (letter) (letter | digit) (letter | digit).
   PROVINCE = '@' digit {digit}.
   MISSION = '@' '"' (letter | digit | '_') {letter | digit | '_'} '"' .
-  ARRAY = '[' {(letter | digit)} {',' (letter | digit)} ']' .
 
 COMMENTS FROM "/*" TO "*/" NESTED  /* Nested means: "There can be comments inside comments" */
 COMMENTS FROM "//" TO lf
@@ -216,24 +215,22 @@ NotExpr<out Expr expr>           (. ArrayList<Character> unaries = new ArrayList
       } Term<out Expr expr2>     (. expr = applyUnaries(new ArrayList<>(unaries.reversed()), expr2, lineNumber);  .)
 .
 
-Array<out Expr expr> =
+ArrayLit<out Expr expr>
     = '['
-        [STRING                  (.  .)]
-        {',' STRING              (.  .)}
-      | [DOUBLE                  (.  .)]
-        {',' DOUBLE              (.  .)}
-      | [NUM                     (.  .)]
-        {',' NUM                 (.  .)}
-      | [IDENT                   (.  .)]
-        {',' IDENT               (.  .)}
-      | [ARRAY                   (.  .)]
-        {',' ARRAY               (.  .)}
-      | [COUNTRY                 (.  .)]
-        {',' COUNTRY             (.  .)}
-      | [PROVINCE                (.  .)]
-        {',' PROVINCE            (.  .)}
-      ']'
+        (. ArrayList<Expr> elems = new ArrayList<>(); .)
+        [Expr<out Expr first> (. elems.add(first); .)
+            { ',' Expr<out Expr next> (. elems.add(next); .)}
+        ]
+    ']'
+    (. expr = new ArrayLiteralExpr(elems, t.line); .)
 .
+
+ArrayAccess<in Expr base, out Expr expr> =
+    '[' Expr<out Expr index> ']'
+    (. expr = new ArrayAccess(base, index, t.line); .)
+    {'[' Expr<out Expr nextIndex> ']'
+        (. expr = new ArrayAccess(expr, nextIndex, t.line); .)
+    }
 
 /* Disallow users to set triggers and effects directly when declaring a mission. */
 MissionLit<out Expr expr>
@@ -288,12 +285,13 @@ Term<out Expr expr>
 .
 
 Primary<out Expr expr>
-    (. expr = null; .)
-    = IDENT                   (. expr = new Ref(t.val, t.line);  .)
+    = IDENT
+        (. expr = new Ref(t.val, t.line);  .)
+        { ArrayAccess<in expr, out expr> }
     | NUM                     (. expr = new NumV(Integer.parseInt(t.val), t.line);  .)
     | DOUBLE                  (. expr = new DoubleV(Double.parseDouble(t.val), t.line); .)
     | STRING                  (. expr = new StringV(t.val.substring(1, t.val.length()-1), t.line); .)
-    | ARRAY                   (. expr = new ArrayV(), t.line .)
+    | ArrayLiteral<out expr>
     | COUNTRY                 (. expr = new CountryV(t.val.substring(1, t.val.length()), t.line);  .)
     | PROVINCE                (. expr = new ProvinceV(t.val.substring(1, t.val.length()), t.line);  .)
     | MissionLit<out expr>
