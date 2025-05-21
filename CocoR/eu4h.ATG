@@ -85,6 +85,7 @@ TOKENS
   PROVINCE = '@' digit {digit}.
   MISSION = '@' '"' (letter | digit | '_') {letter | digit | '_'} '"' .
 
+
 COMMENTS FROM "/*" TO "*/" NESTED  /* Nested means: "There can be comments inside comments" */
 COMMENTS FROM "//" TO lf
 
@@ -165,7 +166,6 @@ Type<out Type type>   (. type = null; .)
     | "bool"          (. type = BoolT.INSTANCE; .)
     | "double"        (. type = DoubleT.INSTANCE; .)
     | "string"        (. type = StringT.INSTANCE; .)
-    | "array"         (. type = ArrayT.INSTANCE; .)
     | "country"       (. type = CountryT.INSTANCE; .)
     | "province"      (. type = ProvinceT.INSTANCE; .)
     | "mission"       (. type = MissionT.INSTANCE; .)
@@ -231,11 +231,11 @@ ArrayAccess<in Expr base, out Expr expr> =
     {'[' Expr<out Expr nextIndex> ']'
         (. expr = new ArrayAccess(expr, nextIndex, t.line); .)
     }
-
+.
 /* Disallow users to set triggers and effects directly when declaring a mission. */
 MissionLit<out Expr expr>
-    (. int position = -1; String icon = "mission_colonial"; .)
-    = '@'
+    (. int position = -1; String icon = "mission_colonial"; .) =
+     '@'
       STRING                  (. String name = t.val.substring(1, t.val.length()-1); .)
       [ NUM                   (. position = Integer.parseInt(t.val); .) ]
       [ STRING                (. icon = t.val.substring(1, t.val.length()-1); .) ]
@@ -291,7 +291,7 @@ Primary<out Expr expr>
     | NUM                     (. expr = new NumV(Integer.parseInt(t.val), t.line);  .)
     | DOUBLE                  (. expr = new DoubleV(Double.parseDouble(t.val), t.line); .)
     | STRING                  (. expr = new StringV(t.val.substring(1, t.val.length()-1), t.line); .)
-    | ArrayLiteral<out expr>
+    | ArrayLit<out expr>
     | COUNTRY                 (. expr = new CountryV(t.val.substring(1, t.val.length()), t.line);  .)
     | PROVINCE                (. expr = new ProvinceV(t.val.substring(1, t.val.length()), t.line);  .)
     | MissionLit<out expr>
