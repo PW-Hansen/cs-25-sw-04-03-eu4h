@@ -103,8 +103,20 @@ class Interpreter {
                     if (!typeMatches(trigger.type, value)) {
                         error("Type mismatch: trigger '${stmt.triggerName}' expects ${trigger.type}, got ${value::class.simpleName}")
                     }
-                    // TODO, scope compatibility check
-                    val triggerAssignment = "${stmt.triggerName} = ${value}"
+
+                    // Trigger assignment value.
+                    var triggerAssignment = "${stmt.triggerName} = ${value}"
+
+                    // Scope compatibility check
+                    val permitted_scope = mission.triggerScope
+                    if (trigger.scope != permitted_scope && permitted_scope != "dual") {
+                        // Invalid scope, print a warning, then create commented-out trigger assignment.
+                        println("Warning: Trigger '${stmt.triggerName}' used in invalid scope on line ${stmt.lineNumber}.")
+                        // # is used to comment out content in EU4 script files.
+                        triggerAssignment = "# $triggerAssignment # Invalid scope usage, permitted scope is '$permitted_scope'."
+                    } 
+
+                    // Extending the trigger string with the new trigger.
                     if (mission.triggers == "") {
                         mission.triggers = triggerAssignment
                     } else if (mission.triggers.endsWith("}")) {

@@ -14,4 +14,3 @@ open_scope = (my_mission, "trigger", france);
 my_mission.icon = "mission_other_icon";
 
 print(my_mission);
-print(my_mission.triggerScope);
