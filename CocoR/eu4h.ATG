@@ -84,6 +84,7 @@ TOKENS
   COUNTRY = '@' (letter) (letter | digit) (letter | digit).
   PROVINCE = '@' digit {digit}.
   MISSION = '@' '"' (letter | digit | '_') {letter | digit | '_'} '"' .
+  ARRAY = '[' {(letter | digit)} {',' (letter | digit)} ']' .
 
 COMMENTS FROM "/*" TO "*/" NESTED  /* Nested means: "There can be comments inside comments" */
 COMMENTS FROM "//" TO lf
@@ -146,7 +147,7 @@ If<out Stmt stmt> =                  (. Stmt stmtElse = Skip.INSTANCE; .)
     "endif"                          (. stmt = new If(cond, stmtThen, stmtElse, lineNumber); .)
 .
 
-/*For<out Stmt stmt> =
+/*For<> =
 
     "for"
     
@@ -165,6 +166,7 @@ Type<out Type type>   (. type = null; .)
     | "bool"          (. type = BoolT.INSTANCE; .)
     | "double"        (. type = DoubleT.INSTANCE; .)
     | "string"        (. type = StringT.INSTANCE; .)
+    | "array"         (. type = ArrayT.INSTANCE; .)
     | "country"       (. type = CountryT.INSTANCE; .)
     | "province"      (. type = ProvinceT.INSTANCE; .)
     | "mission"       (. type = MissionT.INSTANCE; .)
@@ -203,15 +205,34 @@ PlusExpr<out Expr expr>          (. BinaryOperators op = BinaryOperators.ADD; in
 
 MultExpr<out Expr expr>
     = NotExpr<out expr>
-    { '*'                       (. int lineNumber = t.line; .)
-        NotExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.MUL, expr, expr2, lineNumber); .)
+    { '*'                        (. int lineNumber = t.line; .)
+        NotExpr<out Expr expr2>  (. expr = new BinaryOp(BinaryOperators.MUL, expr, expr2, lineNumber); .)
     }
 .
 
-NotExpr<out Expr expr>        (. ArrayList<Character> unaries = new ArrayList(); int lineNumber = -1; .)
-    = { '!'                   (. unaries.add('!'); lineNumber = t.line; .)
-      | '-'                   (. unaries.add('-'); lineNumber = t.line; .)
-      } Term<out Expr expr2>   (. expr = applyUnaries(new ArrayList<>(unaries.reversed()), expr2, lineNumber);  .)
+NotExpr<out Expr expr>           (. ArrayList<Character> unaries = new ArrayList(); int lineNumber = -1; .)
+    = { '!'                      (. unaries.add('!'); lineNumber = t.line; .)
+      | '-'                      (. unaries.add('-'); lineNumber = t.line; .)
+      } Term<out Expr expr2>     (. expr = applyUnaries(new ArrayList<>(unaries.reversed()), expr2, lineNumber);  .)
+.
+
+Array<out Expr expr> =
+    = '['
+        [STRING                  (.  .)]
+        {',' STRING              (.  .)}
+      | [DOUBLE                  (.  .)]
+        {',' DOUBLE              (.  .)}
+      | [NUM                     (.  .)]
+        {',' NUM                 (.  .)}
+      | [IDENT                   (.  .)]
+        {',' IDENT               (.  .)}
+      | [ARRAY                   (.  .)]
+        {',' ARRAY               (.  .)}
+      | [COUNTRY                 (.  .)]
+        {',' COUNTRY             (.  .)}
+      | [PROVINCE                (.  .)]
+        {',' PROVINCE            (.  .)}
+      ']'
 .
 
 /* Disallow users to set triggers and effects directly when declaring a mission. */
@@ -272,6 +293,7 @@ Primary<out Expr expr>
     | NUM                     (. expr = new NumV(Integer.parseInt(t.val), t.line);  .)
     | DOUBLE                  (. expr = new DoubleV(Double.parseDouble(t.val), t.line); .)
     | STRING                  (. expr = new StringV(t.val.substring(1, t.val.length()-1), t.line); .)
+    | ARRAY                   (. expr = new ArrayV(), t.line .)
     | COUNTRY                 (. expr = new CountryV(t.val.substring(1, t.val.length()), t.line);  .)
     | PROVINCE                (. expr = new ProvinceV(t.val.substring(1, t.val.length()), t.line);  .)
     | MissionLit<out expr>
