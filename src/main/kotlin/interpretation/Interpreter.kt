@@ -58,8 +58,29 @@ class Interpreter {
                                 error("Field assignment on non-mission value")
                             }
                         }
+                        is ArrayAccess -> {
+                            // Support a[0] = 5;
+                            // Recursively evaluate all but the last index
+                            fun assignArray(arrAccess: ArrayAccess, value: Val) {
+                                val base = evalExpr(arrAccess.base, envV)
+                                val idx = evalExpr(arrAccess.index, envV).asInt()
+                                if (base !is ArrayVal)
+                                    error("Assignment to non-array value")
+                                if (arrAccess.base is ArrayAccess) {
+                                    // Recurse if multidimensional, but you may need a loop for arbitrary depth
+                                    assignArray(arrAccess.base, value)
+                                } else {
+                                    if (idx < 0 || idx >= base.elements.size)
+                                        error("Array index $idx out of bounds [0, ${base.elements.size})")
+                                    base.elements[idx] = value
+                                }
+                            }
+                            assignArray(lhs, value)
+                        }
                         else -> error("Invalid assignment target")
                     }
+
+
                 }
 
                 is Comp -> {
@@ -164,6 +185,22 @@ class Interpreter {
                 is UnaryOp -> when (expr.op) {
                     UnaryOperators.NOT -> BoolVal(!(evalExpr(expr.expr, envV).asBool()))
                     UnaryOperators.NEG -> IntVal(-(evalExpr(expr.expr, envV).asInt()))
+                }
+
+                is ArrayLiteralExpr -> {
+                    val vals = expr.elements.map { evalExpr(it, envV) }.toMutableList()
+                    ArrayVal(vals)
+                }
+
+                is ArrayAccess -> {
+                    // Evaluate the base and index
+                    val base = evalExpr(expr.base, envV)
+                    val idxVal = evalExpr(expr.index, envV)
+                    if (base !is ArrayVal) error("Tried to index non-array value")
+                    val idx = idxVal.asInt()
+                    if (idx < 0 || idx >= base.elements.size)
+                        error("Array index $idx out of bounds [0, ${base.elements.size})")
+                    base.elements[idx]
                 }
             }
         }

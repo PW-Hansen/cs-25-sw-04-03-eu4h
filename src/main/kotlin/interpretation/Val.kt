@@ -53,3 +53,6 @@ data class TriggerDef(
     val scope: String, // TODO, should be country, province, or dual
     val type: Type
 )
+
+data class ArrayVal(val elements: MutableList<Val>) : Val {
+    override fun asString(): String = elements.toString()}

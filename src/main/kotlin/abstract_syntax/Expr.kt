@@ -24,6 +24,10 @@ class CountryV(val value: String, override val lineNumber: Int) : Expr
 
 class ProvinceV(val value: String, override val lineNumber: Int) : Expr
 
+data class ArrayLiteralExpr(val elements: List<Expr>, override val lineNumber: Int) : Expr
+
+data class ArrayAccess(val base: Expr, val index: Expr, override val lineNumber: Int) : Expr
+
 data class MissionV(
     val name: String,
     val position: Int,

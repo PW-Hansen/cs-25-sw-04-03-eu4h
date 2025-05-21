@@ -215,23 +215,6 @@ NotExpr<out Expr expr>           (. ArrayList<Character> unaries = new ArrayList
       } Term<out Expr expr2>     (. expr = applyUnaries(new ArrayList<>(unaries.reversed()), expr2, lineNumber);  .)
 .
 
-ArrayLit<out Expr expr>
-    = '['
-        (. ArrayList<Expr> elems = new ArrayList<>(); .)
-        [Expr<out Expr first> (. elems.add(first); .)
-            { ',' Expr<out Expr next> (. elems.add(next); .)}
-        ]
-    ']'
-    (. expr = new ArrayLiteralExpr(elems, t.line); .)
-.
-
-ArrayAccess<in Expr base, out Expr expr> =
-    '[' Expr<out Expr index> ']'
-    (. expr = new ArrayAccess(base, index, t.line); .)
-    {'[' Expr<out Expr nextIndex> ']'
-        (. expr = new ArrayAccess(expr, nextIndex, t.line); .)
-    }
-.
 /* Disallow users to set triggers and effects directly when declaring a mission. */
 MissionLit<out Expr expr>
     (. int position = -1; String icon = "mission_colonial"; .) =

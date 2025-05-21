@@ -1,6 +1,7 @@
 package org.sw_08.eu4h.pretty_printing
 
 import org.sw_08.eu4h.abstract_syntax.*
+import org.sw_08.eu4h.interpretation.ArrayVal
 import org.sw_08.eu4h.interpretation.MissionVal
 
 class PrettyPrinter {
@@ -53,6 +54,8 @@ class PrettyPrinter {
                 is ProvinceV -> expr.value.toString()
                 is MissionV -> "Mission(${expr.name}, ${expr.position}, ${expr.icon}, ${expr.triggers}, ${expr.effects})"
                 is FieldAccess -> printExpr(expr.base) + "." + expr.field
+                is ArrayLiteralExpr -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
+                is ArrayAccess -> "${printExpr(expr.base)}[${printExpr(expr.index)}]"
             }
 
         fun printType(type: Type?): String =
@@ -65,6 +68,7 @@ class PrettyPrinter {
                 CountryT -> "country"
                 ProvinceT -> "province"
                 MissionT -> "mission"
+                ArrayT -> "array"
             }
 
 
