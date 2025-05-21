@@ -111,7 +111,9 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.INSTANCE; .)
     //| For<out stmt>
     | While<out stmt> 
     | CreateTriggerStmt<out stmt>
-    | AssignTriggerStmt<out stmt> )
+    | AssignTriggerStmt<out stmt> 
+    | OpenScopeStmt<out stmt> 
+    | CloseScopeStmt<out stmt> )
 .
 
 Declaration<out Stmt stmt> =
@@ -223,10 +225,12 @@ MissionLit<out Expr expr>
       [ STRING                (. icon = t.val.substring(1, t.val.length()-1); .) ]
       (. 
         String triggers = "";
+        String triggerScope = "country";
         String effects = "";
+        String effectScope = "country";
         /* Default position to 1 if not set. */
         if (position == -1) position = 1;
-        expr = new MissionV(name, position, icon, triggers, effects, t.line);
+        expr = new MissionV(name, position, icon, triggers, triggerScope, effects, effectScope, t.line);
       .)
 .
 
@@ -256,6 +260,33 @@ AssignTriggerStmt<out Stmt stmt> =
         Expr<out Expr expr>
     ')' ';'
     (. stmt = new AssignTrigger(missionName, triggerName, expr, t.line); .)
+.
+
+OpenScopeStmt<out Stmt stmt> =
+    "open_scope" '=' '('
+        IDENT      (. String missionName = t.val; .) ',' 
+        STRING     (. String spaceName = t.val.substring(1, t.val.length()-1); .) ',' 
+        (.
+            if (!spaceName.equals("trigger") && !spaceName.equals("effect")) {
+                SemErr("The second argument of open_scope must be \"trigger\" or \"effect\".");
+            }
+        .)
+        IDENT      (. String scopeVar = t.val; .)
+    ')' ';'
+    (. stmt = new OpenScope(missionName, spaceName, scopeVar, t.line); .)
+.
+
+CloseScopeStmt<out Stmt stmt> =
+    "close_scope" '=' '('
+        IDENT      (. String missionName = t.val; .) ',' 
+        STRING     (. String spaceName = t.val.substring(1, t.val.length()-1); .) 
+        (.
+            if (!spaceName.equals("trigger") && !spaceName.equals("effect")) {
+                SemErr("The second argument of close_scope must be \"trigger\" or \"effect\".");
+            }
+        .)
+    ')' ';'
+    (. stmt = new CloseScope(missionName, spaceName, t.line); .)
 .
 
 Term<out Expr expr>

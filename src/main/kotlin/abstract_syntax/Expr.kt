@@ -29,7 +29,9 @@ data class MissionV(
     val position: Int,
     val icon: String,
     val triggers: String,
+    val triggerScope: String,
     val effects: String,
+    val effectScope: String,
     override val lineNumber: Int
 ) : Expr
 

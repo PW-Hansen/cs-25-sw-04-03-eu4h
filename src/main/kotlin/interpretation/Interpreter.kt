@@ -51,7 +51,9 @@ class Interpreter {
                                     "position" -> baseVal.position = value.asInt()
                                     "icon" -> baseVal.icon = value.asString()
                                     "triggers" -> baseVal.triggers = value.asString()
+                                    "triggerScope" -> baseVal.triggerScope = value.asString()
                                     "effects" -> baseVal.effects = value.asString()
+                                    "effectScope" -> baseVal.effectScope = value.asString()
                                     else -> error("Unknown field '${lhs.field}' for mission")
                                 }
                             } else {
@@ -102,11 +104,93 @@ class Interpreter {
                         error("Type mismatch: trigger '${stmt.triggerName}' expects ${trigger.type}, got ${value::class.simpleName}")
                     }
                     // TODO, scope compatibility check
-                    val triggerAssignment = "\t\t${stmt.triggerName} = ${value}"
+                    val triggerAssignment = "${stmt.triggerName} = ${value}"
                     if (mission.triggers == "") {
                         mission.triggers = triggerAssignment
+                    } else if (mission.triggers.endsWith("}")) {
+                        mission.triggers = mission.triggers.substring(0, mission.triggers.length - 1) + "\n$triggerAssignment\n}"
                     } else {
                         mission.triggers += "\n$triggerAssignment"
+                    }
+                }
+
+                is OpenScope -> {
+                    val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
+                    val scopeVal = envV.tryGet(stmt.scope) ?: error("Scope variable '${stmt.scope}' not found.")
+
+                    val scopeType = when (scopeVal) {
+                        is CountryVal -> "country"
+                        is ProvinceVal -> "province"
+                        else -> error("Invalid input, third argument must be a country or province.")
+                    }
+
+                    when (stmt.spaceName) {
+                        "trigger" ->  { 
+                            mission.triggerScope = scopeType
+
+                            val newScope = when (scopeVal) {
+                                is CountryVal -> scopeVal.country
+                                is ProvinceVal -> scopeVal.province
+                                else -> error("Invalid input, third argument must be a country or province.")
+                            }
+
+                            val triggerScopeChange = "$newScope = {}"
+
+                            if (mission.triggers == "") {
+                                mission.triggers = triggerScopeChange
+                            } else if (mission.triggers.endsWith("}")) {
+                                mission.triggers = mission.triggers.substring(0, mission.triggers.length - 1) + "\n$triggerScopeChange\n}"
+                            } else {
+                                mission.triggers += "\n$triggerScopeChange"
+                            }
+                        }
+                        "effect" ->  { 
+                            mission.effectScope = scopeType
+
+                            val newScope = when (scopeVal) {
+                                is CountryVal -> scopeVal.country
+                                is ProvinceVal -> scopeVal.province
+                                else -> error("Invalid input, third argument must be a country or province.")
+                            }
+
+                            val effectScopeChange = "$newScope = {}"
+
+                            if (mission.effects == "") {
+                                mission.effects = effectScopeChange
+                            } else if (mission.effects.endsWith("}")) {
+                                mission.effects = mission.effects.substring(0, mission.effects.length - 1) + "\n$effectScopeChange\n}"
+                            } else {
+                                mission.effects += "\n$effectScopeChange"
+                            }
+                        }
+                        else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
+                    }
+                }
+
+                is CloseScope -> {
+                    val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
+                    when (stmt.spaceName) {
+                        "trigger" -> mission.triggerScope = ""
+                        "effect" -> mission.effectScope = ""
+                        else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
+                    }
+
+                    when (stmt.spaceName) {
+                        "trigger" -> {
+                            if (mission.triggers.endsWith("}")) {
+                                mission.triggers += "\n"
+                            } else {
+                                error("Invalid trigger scope, expected '}' at the end.")
+                            }
+                        }
+                        "effect" -> {
+                            if (mission.effects.endsWith("}")) {
+                                mission.effects += "\n"
+                            } else {
+                                error("Invalid effect scope, expected '}' at the end.")
+                            }
+                        }
+                        else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
                     }
                 }
             }
@@ -120,7 +204,7 @@ class Interpreter {
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
-                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.effects)
+                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScope, expr.effects, expr.effectScope)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 
                 is BinaryOp -> {
@@ -153,7 +237,9 @@ class Interpreter {
                             "position" -> IntVal(baseVal.position)
                             "icon" -> StringVal(baseVal.icon)
                             "triggers" -> StringVal(baseVal.triggers)
+                            "triggerScope" -> StringVal(baseVal.triggerScope)
                             "effects" -> StringVal(baseVal.effects)
+                            "effectScope" -> StringVal(baseVal.effectScope)
                             else -> error("Unknown field '${expr.field}' for mission")
                         }
                     } else {

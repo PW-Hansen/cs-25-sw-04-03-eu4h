@@ -6,6 +6,12 @@ mission my_mission = @ "this_is_my_mission" 3;
 
 create_trigger = (province, "artillery_in_province", int);
 assign_trigger = (my_mission, "artillery_in_province", 10);
+open_scope = (my_mission, "trigger", paris);
+assign_trigger = (my_mission, "artillery_in_province", 10);
+close_scope = (my_mission, "trigger");
+open_scope = (my_mission, "trigger", france);
+
+my_mission.icon = "mission_other_icon";
 
 print(my_mission);
-
+print(my_mission.triggerScope);

@@ -47,7 +47,7 @@ class AssignAndTypeChecker {
                             errors.add("Line ${stmt.lineNumber}: Field assignment on non-mission value '${PrettyPrinter.printType(baseType)}'.")
                         } else {
                             val fieldType = when (lhs.field) {
-                                "name", "icon", "triggers", "effects" -> StringT
+                                "name", "icon", "triggers", "triggerScope", "effects", "effectScope" -> StringT
                                 "position" -> IntT
                                 else -> {
                                     errors.add("Line ${stmt.lineNumber}: Unknown field '${lhs.field}' for mission.")
@@ -116,6 +116,19 @@ class AssignAndTypeChecker {
                     errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.triggerName}' expects type '${PrettyPrinter.printType(expectedType)}', but got '${PrettyPrinter.printType(exprType)}'.")
                 }
             }
+
+            is OpenScope -> {
+                val varInfo = envAT.tryGet(stmt.scope)
+                if (varInfo == null) {
+                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' is not defined.")
+                } else if (varInfo.type != CountryT && varInfo.type != ProvinceT) {
+                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' must be either country or province.")
+                }
+            }
+
+            is CloseScope -> {
+                // No checks required here.
+            }
         }
     }
 
@@ -138,7 +151,9 @@ class AssignAndTypeChecker {
                     "position" -> IntT
                     "icon" -> StringT
                     "triggers" -> StringT
+                    "triggerScope" -> StringT
                     "effects" -> StringT
+                    "effectScope" -> StringT
                     else -> error("Unknown field '${expr.field}' for mission")
                 }
             }

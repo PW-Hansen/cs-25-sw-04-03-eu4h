@@ -28,3 +28,7 @@ class While(var condition: Expr?, var body: Stmt?, override val lineNumber: Int)
 data class CreateTrigger(val scope: String, val name: String, val type: Type, override val lineNumber: Int) : Stmt
 
 data class AssignTrigger(val missionName: String, val triggerName: String, val expr: Expr, override val lineNumber: Int) : Stmt
+
+data class OpenScope( val missionName: String, val spaceName: String, val scope: String, override val lineNumber: Int) : Stmt
+
+data class CloseScope(val missionName: String, val spaceName: String, override val lineNumber: Int) : Stmt
