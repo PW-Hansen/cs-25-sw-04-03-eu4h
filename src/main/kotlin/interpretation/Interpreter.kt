@@ -6,6 +6,7 @@ fun typeMatches(type: Type, value: Val): Boolean {
     return when (type) {
         is IntT -> value is IntVal
         is BoolT -> value is BoolVal
+        is DoubleT -> value is DoubleVal
         is StringT -> value is StringVal
         is CountryT -> value is CountryVal
         is ProvinceT -> value is ProvinceVal
