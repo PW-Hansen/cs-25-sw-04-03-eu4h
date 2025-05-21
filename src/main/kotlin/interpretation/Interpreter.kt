@@ -51,7 +51,9 @@ class Interpreter {
                                     "position" -> baseVal.position = value.asInt()
                                     "icon" -> baseVal.icon = value.asString()
                                     "triggers" -> baseVal.triggers = value.asString()
+                                    "triggerScope" -> baseVal.triggerScope = value.asString()
                                     "effects" -> baseVal.effects = value.asString()
+                                    "effectScope" -> baseVal.effectScope = value.asString()
                                     else -> error("Unknown field '${lhs.field}' for mission")
                                 }
                             } else {
@@ -120,7 +122,7 @@ class Interpreter {
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
-                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.effects)
+                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScope, expr.effects, expr.effectScope)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 
                 is BinaryOp -> {
@@ -153,7 +155,9 @@ class Interpreter {
                             "position" -> IntVal(baseVal.position)
                             "icon" -> StringVal(baseVal.icon)
                             "triggers" -> StringVal(baseVal.triggers)
+                            "triggerScope" -> StringVal(baseVal.triggerScope)
                             "effects" -> StringVal(baseVal.effects)
+                            "effectScope" -> StringVal(baseVal.effectScope)
                             else -> error("Unknown field '${expr.field}' for mission")
                         }
                     } else {
