@@ -47,13 +47,13 @@ class Interpreter {
                             val baseVal = evalExpr(lhs.base, envV)
                             if (baseVal is MissionVal) {
                                 when (lhs.field) {
-                                    "name" -> baseVal.name = value.asString()
+                                    "name" -> error("Name cannot be overwritten.")
                                     "position" -> baseVal.position = value.asInt()
                                     "icon" -> baseVal.icon = value.asString()
                                     "triggers" -> baseVal.triggers = value.asString()
-                                    "triggerScope" -> baseVal.triggerScope = value.asString()
+                                    "triggerScope" -> error("Cannot assign to triggerScope directly")
                                     "effects" -> baseVal.effects = value.asString()
-                                    "effectScope" -> baseVal.effectScope = value.asString()
+                                    "effectScope" -> error("Cannot assign to triggerScope directly")
                                     else -> error("Unknown field '${lhs.field}' for mission")
                                 }
                             } else {
@@ -138,8 +138,20 @@ class Interpreter {
                     if (!typeMatches(trigger.type, value)) {
                         error("Type mismatch: trigger '${stmt.triggerName}' expects ${trigger.type}, got ${value::class.simpleName}")
                     }
-                    // TODO, scope compatibility check
-                    val triggerAssignment = "${stmt.triggerName} = ${value}"
+
+                    // Trigger assignment value.
+                    var triggerAssignment = "${stmt.triggerName} = ${value}"
+
+                    // Scope compatibility check
+                    val permitted_scope = mission.triggerScope.last()
+                    if (trigger.scope != permitted_scope && permitted_scope != "dual") {
+                        // Invalid scope, print a warning, then create commented-out trigger assignment.
+                        println("Warning: Trigger '${stmt.triggerName}' used in invalid scope on line ${stmt.lineNumber}.")
+                        // # is used to comment out content in EU4 script files.
+                        triggerAssignment = "# $triggerAssignment # Invalid scope usage, permitted scope is '$permitted_scope'."
+                    } 
+
+                    // Extending the trigger string with the new trigger.
                     if (mission.triggers == "") {
                         mission.triggers = triggerAssignment
                     } else if (mission.triggers.endsWith("}")) {
@@ -161,7 +173,7 @@ class Interpreter {
 
                     when (stmt.spaceName) {
                         "trigger" ->  { 
-                            mission.triggerScope = scopeType
+                            mission.triggerScope.add(scopeType)
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
@@ -180,7 +192,7 @@ class Interpreter {
                             }
                         }
                         "effect" ->  { 
-                            mission.effectScope = scopeType
+                            mission.effectScope.add(scopeType)
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
@@ -205,8 +217,8 @@ class Interpreter {
                 is CloseScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     when (stmt.spaceName) {
-                        "trigger" -> mission.triggerScope = ""
-                        "effect" -> mission.effectScope = ""
+                        "trigger" -> mission.triggerScope.removeAt(mission.triggerScope.size - 1)
+                        "effect" -> mission.effectScope.removeAt(mission.effectScope.size - 1)
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
                     }
 
@@ -215,14 +227,14 @@ class Interpreter {
                             if (mission.triggers.endsWith("}")) {
                                 mission.triggers += "\n"
                             } else {
-                                error("Invalid trigger scope, expected '}' at the end.")
+                                error("Cannot close the ROOT scope.")
                             }
                         }
                         "effect" -> {
                             if (mission.effects.endsWith("}")) {
                                 mission.effects += "\n"
                             } else {
-                                error("Invalid effect scope, expected '}' at the end.")
+                                error("Cannot close the ROOT scope.")
                             }
                         }
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
@@ -315,9 +327,9 @@ class Interpreter {
                                 "position" -> IntVal(baseVal.position)
                                 "icon" -> StringVal(baseVal.icon)
                                 "triggers" -> StringVal(baseVal.triggers)
-                                "triggerScope" -> StringVal(baseVal.triggerScope)
+                                "triggerScope" -> StringVal(baseVal.triggerScope.joinToString(","))
                                 "effects" -> StringVal(baseVal.effects)
-                                "effectScope" -> StringVal(baseVal.effectScope)
+                                "effectScope" -> StringVal(baseVal.effectScope.joinToString(","))
                                 else -> error("Unknown field '${expr.field}' for mission")
                             }
                         }

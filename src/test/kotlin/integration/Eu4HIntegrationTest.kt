@@ -24,7 +24,9 @@ class Eu4hIntegrationTest {
     @Test
     fun testAssignTriggerSucceedsWithCorrectInput() {
         // Set up a mission and a trigger expecting an Int, and pass an Int
-        Interpreter.missions["my_mission"] = MissionVal("my_mission", 0, "", "", "", effects = "", effectScope = "")
+        Interpreter.missions["my_mission"] = MissionVal(
+            "my_mission", 0, "", "", mutableListOf("country"), effects = "", effectScope = mutableListOf("country")
+        )
         Interpreter.triggers["army_size"] = TriggerDef("country", IntT)
         val env = EnvV()
         val stmt = AssignTrigger("my_mission", "army_size", NumV(100, 1), 1)
@@ -50,7 +52,9 @@ class Eu4hIntegrationTest {
     @Test
     fun testAssignTriggerFailsIfTriggerNotDefined() {
         // Set up a mission, but do NOT set up a trigger
-        Interpreter.missions["my_mission"] = MissionVal("my_mission", 0, "", "", "", effects = "", effectScope = "")
+        Interpreter.missions["my_mission"] = MissionVal(
+            "my_mission", 0, "", "", mutableListOf("country"), effects = "", effectScope = mutableListOf("country")
+        )
         val env = EnvV()
         val stmt = AssignTrigger("my_mission", "missing_trigger", NumV(100, 1), 1)
 
@@ -62,7 +66,9 @@ class Eu4hIntegrationTest {
     @Test
     fun testAssignTriggerFailsIfWrongInputType() {
         // Set up a mission and a trigger expecting an Int, but pass a String
-        Interpreter.missions["my_mission"] = MissionVal("my_mission", 0, "", "", "", effects = "", effectScope = "")
+        Interpreter.missions["my_mission"] = MissionVal(
+            "my_mission", 0, "", "", mutableListOf("country"), effects = "", effectScope = mutableListOf("country")
+        )
         Interpreter.triggers["army_size"] = TriggerDef("country", IntT)
         val env = EnvV()
         val stmt = AssignTrigger("my_mission", "army_size", StringV("not a number", 1), 1)
