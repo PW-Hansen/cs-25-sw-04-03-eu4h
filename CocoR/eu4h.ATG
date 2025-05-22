@@ -113,6 +113,8 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.INSTANCE; .)
     | If<out stmt>
     //| For<out stmt>
     | While<out stmt> 
+    | PushStmt<out stmt>
+    | PopStmt<out stmt>
     | CreateTriggerStmt<out stmt>
     | AssignTriggerStmt<out stmt> )
 .
@@ -169,6 +171,16 @@ While<out Stmt stmt> =
     "while"                              (. int lineNumber = t.line; .)
     '(' Expr<out Expr cond> ')' "{" Stmts<out Stmt body>
     "}"                           (. stmt = new While(cond, body, lineNumber); .)
+.
+
+PushStmt<out Stmt stmt> =
+    "push" '(' IDENT (. String arrName = t.val; .) ',' Expr<out Expr value> ')' ';'
+    (. stmt = new PushStmt(arrName, value, t.line); .)
+.
+
+PopStmt<out Stmt stmt> =
+    "pop" '(' IDENT (. String arrName = t.val; .) ')' ';'
+    (. stmt = new PopStmt(arrName, t.line); .)
 .
 
 /*------------------------------------------------------------------------*/

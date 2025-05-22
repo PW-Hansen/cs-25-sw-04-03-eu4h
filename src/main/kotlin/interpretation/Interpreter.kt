@@ -107,6 +107,20 @@ class Interpreter {
                     }
                 }
 
+                is PushStmt -> {
+                    val arrVal = envV.tryGet(stmt.arrayName)
+                    if (arrVal !is ArrayVal) error("Cannot push to non-array variable '${stmt.arrayName}'")
+                    val value = evalExpr(stmt.value, envV)
+                    arrVal.elements.add(value)
+                }
+                
+                is PopStmt -> {
+                    val arrVal = envV.tryGet(stmt.arrayName)
+                    if (arrVal !is ArrayVal) error("Cannot pop from non-array variable '${stmt.arrayName}'")
+                    if (arrVal.elements.isEmpty()) error("Cannot pop from empty array '${stmt.arrayName}'")
+                    arrVal.elements.removeAt(arrVal.elements.size - 1)
+                }
+
                 is CreateTrigger -> {
                     if (triggers.containsKey(stmt.name)) {
                         error("Trigger '${stmt.name}' already exists.")

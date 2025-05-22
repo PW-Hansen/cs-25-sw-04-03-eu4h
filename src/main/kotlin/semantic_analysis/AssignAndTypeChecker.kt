@@ -99,6 +99,25 @@ class AssignAndTypeChecker {
                 stmtT(stmt.body!!, envAT.clone().newScope())
             }
 
+            is PushStmt -> {
+                val at = envAT.tryGet(stmt.arrayName)
+                if (at == null)
+                    errors.add("Line ${stmt.lineNumber}: Push to undeclared variable '${stmt.arrayName}'")
+                else if (at.type !is ArrayT)
+                    errors.add("Line ${stmt.lineNumber}: Push to non-array variable '${stmt.arrayName}'")
+                else {
+                    val valueType = exprT(stmt.value, envAT)
+                    // Type check?
+                }
+            }
+            is PopStmt -> {
+                val at = envAT.tryGet(stmt.arrayName)
+                if (at == null)
+                    errors.add("Line ${stmt.lineNumber}: Pop from undeclared variable '${stmt.arrayName}'")
+                else if (at.type !is ArrayT)
+                    errors.add("Line ${stmt.lineNumber}: Pop from non-array variable '${stmt.arrayName}'")
+            }
+
             is CreateTrigger -> {
                 if (triggerTypes.containsKey(stmt.name)) {
                     errors.add("Line ${stmt.lineNumber}: Trigger '${stmt.name}' is already defined.")

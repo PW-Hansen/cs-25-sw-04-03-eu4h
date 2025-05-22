@@ -26,6 +26,8 @@ class PrettyPrinter {
                         printStmt(stmt.body, depth + 1)
                     ) + "\n" + indent(depth) + "endwhile\n"
                 }
+                is PushStmt -> indent(depth) + "push(" + stmt.arrayName + ", " + printExpr(stmt.value) + ");"
+                is PopStmt -> indent(depth) + "pop(" + stmt.arrayName + ");"
                 is CreateTrigger -> indent(depth) +
                     "create_trigger = (" +
                     stmt.scope + ", " +

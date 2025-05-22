@@ -1,4 +1,11 @@
 
 array test = [2, 3, 4];
 
-print(test[1]);
+print(test);
+
+push(test, 4);
+print(test);
+push(test, 5);
+print(test);
+pop(test);
+print(test);
