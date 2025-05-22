@@ -189,20 +189,6 @@ class AssignAndTypeChecker {
                 return at?.type
             }
 
-            is ArrayLiteralExpr -> {
-                if (expr.elements.isEmpty()) {
-                    return ArrayT
-                }
-                val firstType = exprT(expr.elements[0], envAT)
-                for (el in expr.elements) {
-                    val elType = exprT(el, envAT)
-                    if (elType != null && elType.javaClass != firstType?.javaClass) {
-                        errors.add("Line ${expr.lineNumber}: Array elements have inconsistent types: '${PrettyPrinter.printType(firstType)}' vs '${PrettyPrinter.printType(elType)}'.")
-                    }
-                }
-                return ArrayT
-            }
-
             is ArrayAccess -> {
                 val baseType = exprT(expr.base, envAT)
                 val idxType = exprT(expr.index, envAT)
