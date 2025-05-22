@@ -47,7 +47,7 @@ class AssignAndTypeChecker {
                             errors.add("Line ${stmt.lineNumber}: Field assignment on non-mission value '${PrettyPrinter.printType(baseType)}'.")
                         } else {
                             val fieldType = when (lhs.field) {
-                                "name", "icon", "triggers", "triggerScope", "effects", "effectScope" -> StringT
+                                "name", "icon", "triggers", "triggerScopeStack", "effects", "effectScopeStack" -> StringT
                                 "position" -> IntT
                                 else -> {
                                     errors.add("Line ${stmt.lineNumber}: Unknown field '${lhs.field}' for mission.")
@@ -189,9 +189,9 @@ class AssignAndTypeChecker {
                         "position" -> IntT
                         "icon" -> StringT
                         "triggers" -> StringT
-                        "triggerScope" -> StringT
+                        "triggerScopeStack" -> StringT
                         "effects" -> StringT
-                        "effectScope" -> StringT
+                        "effectScopeStack" -> StringT
                         else -> error("Unknown field '${expr.field}' for mission")
                     }
                 } else if (baseType is ArrayT) {

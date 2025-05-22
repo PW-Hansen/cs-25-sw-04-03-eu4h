@@ -45,12 +45,12 @@ data class MissionVal(
     var position: Int,
     var icon: String,
     var triggers: String,
-    var triggerScope: MutableList<String>,
+    var triggerScopeStack: MutableList<String>,
     var effects: String,
-    var effectScope: MutableList<String>
+    var effectScopeStack: MutableList<String>
 ) : Val {
     override fun toString(): String =
-        "Mission(name='$name', position=$position, icon='$icon', triggers='$triggers', triggerScope='$triggerScope', effects='$effects', effectScope='$effectScope')"
+        "Mission(name='$name', position=$position, icon='$icon', triggers='$triggers', triggerScopeStack='$triggerScopeStack', effects='$effects', effectScopeStack='$effectScopeStack')"
 }
 data class TriggerDef(
     val scope: String, // TODO, should be country, province, or dual

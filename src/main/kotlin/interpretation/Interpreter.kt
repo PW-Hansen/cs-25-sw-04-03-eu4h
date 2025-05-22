@@ -52,9 +52,9 @@ class Interpreter {
                                     "position" -> baseVal.position = value.asInt()
                                     "icon" -> baseVal.icon = value.asString()
                                     "triggers" -> baseVal.triggers = value.asString()
-                                    "triggerScope" -> error("Cannot assign to triggerScope directly")
+                                    "triggerScopeStack" -> error("Cannot assign to triggerScopeStack directly")
                                     "effects" -> baseVal.effects = value.asString()
-                                    "effectScope" -> error("Cannot assign to triggerScope directly")
+                                    "effectScopeStack" -> error("Cannot assign to triggerScopeStack directly")
                                     else -> error("Unknown field '${lhs.field}' for mission")
                                 }
                             } else {
@@ -144,7 +144,7 @@ class Interpreter {
                     var triggerAssignment = "${stmt.triggerName} = ${value}"
 
                     // Scope compatibility check
-                    val permitted_scope = mission.triggerScope.last()
+                    val permitted_scope = mission.triggerScopeStack.last()
                     if (trigger.scope != permitted_scope && permitted_scope != "dual") {
                         // Invalid scope, print a warning, then create commented-out trigger assignment.
                         println("Warning: Trigger '${stmt.triggerName}' used in invalid scope on line ${stmt.lineNumber}.")
@@ -182,7 +182,7 @@ class Interpreter {
                     var effectAssignment = "${stmt.effectName} = ${value}"
 
                     // Scope compatibility check
-                    val permitted_scope = mission.effectScope.last()
+                    val permitted_scope = mission.effectScopeStack.last()
                     if (effect.scope != permitted_scope && permitted_scope != "dual") {
                         // Invalid scope, print a warning, then create commented-out effect assignment.
                         println("Warning: Effect '${stmt.effectName}' used in invalid scope on line ${stmt.lineNumber}.")
@@ -214,10 +214,10 @@ class Interpreter {
                     when (stmt.spaceName) {
                         "trigger" ->  { 
                             if (scopeType == "logical") {
-                                val previousScope = mission.triggerScope.last()
-                                mission.triggerScope.add(previousScope)
+                                val previousScope = mission.triggerScopeStack.last()
+                                mission.triggerScopeStack.add(previousScope)
                             } else {
-                                mission.triggerScope.add(scopeType)
+                                mission.triggerScopeStack.add(scopeType)
                             }
 
                             val newScope = when (scopeVal) {
@@ -227,22 +227,22 @@ class Interpreter {
                                 else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
-                            val triggerScopeChange = "$newScope = {}"
+                            val triggerScopeStackChange = "$newScope = {}"
 
                             if (mission.triggers == "") {
-                                mission.triggers = triggerScopeChange
+                                mission.triggers = triggerScopeStackChange
                             } else if (mission.triggers.endsWith("}")) {
-                                mission.triggers = mission.triggers.substring(0, mission.triggers.length - 1) + "\n$triggerScopeChange\n}"
+                                mission.triggers = mission.triggers.substring(0, mission.triggers.length - 1) + "\n$triggerScopeStackChange\n}"
                             } else {
-                                mission.triggers += "\n$triggerScopeChange"
+                                mission.triggers += "\n$triggerScopeStackChange"
                             }
                         }
                         "effect" ->  { 
                             if (scopeType == "logical") {
-                                val previousScope = mission.effectScope.last()
-                                mission.effectScope.add(previousScope)
+                                val previousScope = mission.effectScopeStack.last()
+                                mission.effectScopeStack.add(previousScope)
                             } else {
-                                mission.effectScope.add(scopeType)
+                                mission.effectScopeStack.add(scopeType)
                             }
 
                             val newScope = when (scopeVal) {
@@ -252,14 +252,14 @@ class Interpreter {
                                 else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
-                            val effectScopeChange = "$newScope = {}"
+                            val effectScopeStackChange = "$newScope = {}"
 
                             if (mission.effects == "") {
-                                mission.effects = effectScopeChange
+                                mission.effects = effectScopeStackChange
                             } else if (mission.effects.endsWith("}")) {
-                                mission.effects = mission.effects.substring(0, mission.effects.length - 1) + "\n$effectScopeChange\n}"
+                                mission.effects = mission.effects.substring(0, mission.effects.length - 1) + "\n$effectScopeStackChange\n}"
                             } else {
-                                mission.effects += "\n$effectScopeChange"
+                                mission.effects += "\n$effectScopeStackChange"
                             }
                         }
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
@@ -269,8 +269,8 @@ class Interpreter {
                 is CloseScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     when (stmt.spaceName) {
-                        "trigger" -> mission.triggerScope.removeAt(mission.triggerScope.size - 1)
-                        "effect" -> mission.effectScope.removeAt(mission.effectScope.size - 1)
+                        "trigger" -> mission.triggerScopeStack.removeAt(mission.triggerScopeStack.size - 1)
+                        "effect" -> mission.effectScopeStack.removeAt(mission.effectScopeStack.size - 1)
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
                     }
 
@@ -304,7 +304,7 @@ class Interpreter {
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
                 is LogicalV -> LogicalVal(expr.op)
-                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScope, expr.effects, expr.effectScope)
+                is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScopeStack, expr.effects, expr.effectScopeStack)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 
                 is BinaryOp -> {
@@ -380,9 +380,9 @@ class Interpreter {
                                 "position" -> IntVal(baseVal.position)
                                 "icon" -> StringVal(baseVal.icon)
                                 "triggers" -> StringVal(baseVal.triggers)
-                                "triggerScope" -> StringVal(baseVal.triggerScope.joinToString(","))
+                                "triggerScopeStack" -> StringVal(baseVal.triggerScopeStack.joinToString(","))
                                 "effects" -> StringVal(baseVal.effects)
-                                "effectScope" -> StringVal(baseVal.effectScope.joinToString(","))
+                                "effectScopeStack" -> StringVal(baseVal.effectScopeStack.joinToString(","))
                                 else -> error("Unknown field '${expr.field}' for mission")
                             }
                         }

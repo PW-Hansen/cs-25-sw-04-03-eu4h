@@ -33,9 +33,9 @@ data class MissionV(
     var position: Int,
     var icon: String,
     var triggers: String,
-    var triggerScope: MutableList<String>,
+    var triggerScopeStack: MutableList<String>,
     var effects: String,
-    var effectScope: MutableList<String>,
+    var effectScopeStack: MutableList<String>,
     override val lineNumber: Int
 ) : Expr
 

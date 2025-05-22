@@ -4,21 +4,21 @@ province paris = @151;
 
 mission my_mission = @ "this_is_my_mission" 3;
 
-print(my_mission.triggerScope);
+print(my_mission.triggerScopeStack);
 
 logical my_logical = NOT;
 
 create_trigger = (province, "artillery_in_province", int);
 assign_trigger = (my_mission, "artillery_in_province", 10);
 open_scope = (my_mission, "trigger", paris);
-print(my_mission.triggerScope);
+print(my_mission.triggerScopeStack);
 assign_trigger = (my_mission, "artillery_in_province", 10);
 close_scope = (my_mission, "trigger");
-print(my_mission.triggerScope);
+print(my_mission.triggerScopeStack);
 open_scope = (my_mission, "trigger", NOT);
 open_scope = (my_mission, "trigger", OR);
 
-print(my_mission.triggerScope);
+print(my_mission.triggerScopeStack);
 
 create_effect = (country, "add_adm_power", int);
 assign_effect = (my_mission, "add_adm_power", -100);
