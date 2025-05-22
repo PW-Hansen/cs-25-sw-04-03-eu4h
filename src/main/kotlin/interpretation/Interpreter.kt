@@ -308,19 +308,26 @@ class Interpreter {
 
                 is FieldAccess -> {
                     val baseVal = evalExpr(expr.base, envV)
-                    if (baseVal is MissionVal) {
-                        when (expr.field) {
-                            "name" -> StringVal(baseVal.name)
-                            "position" -> IntVal(baseVal.position)
-                            "icon" -> StringVal(baseVal.icon)
-                            "triggers" -> StringVal(baseVal.triggers)
-                            "triggerScope" -> StringVal(baseVal.triggerScope)
-                            "effects" -> StringVal(baseVal.effects)
-                            "effectScope" -> StringVal(baseVal.effectScope)
-                            else -> error("Unknown field '${expr.field}' for mission")
+                    when (baseVal) {
+                        is MissionVal -> {
+                            when (expr.field) {
+                                "name" -> StringVal(baseVal.name)
+                                "position" -> IntVal(baseVal.position)
+                                "icon" -> StringVal(baseVal.icon)
+                                "triggers" -> StringVal(baseVal.triggers)
+                                "triggerScope" -> StringVal(baseVal.triggerScope)
+                                "effects" -> StringVal(baseVal.effects)
+                                "effectScope" -> StringVal(baseVal.effectScope)
+                                else -> error("Unknown field '${expr.field}' for mission")
+                            }
                         }
-                    } else {
-                        error("Field access on non-mission value")
+                        is ArrayVal -> {
+                            when (expr.field) {
+                                "length" -> IntVal(baseVal.elements.size)
+                                else -> error("Unknown field '${expr.field}' for array")
+                            }
+                        }
+                        else -> error("Field access on unsupported value")
                     }
                 }
 
