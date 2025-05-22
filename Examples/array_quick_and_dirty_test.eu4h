@@ -9,3 +9,4 @@ push(test, 5);
 print(test);
 pop(test);
 print(test);
+print(test.length);

@@ -164,17 +164,25 @@ class AssignAndTypeChecker {
 
             is FieldAccess -> {
                 val baseType = exprT(expr.base, envAT)
-                if (baseType != null && baseType !is MissionT)
-                    errors.add("Line ${expr.lineNumber}: Field access on non-mission value '${PrettyPrinter.printType(baseType)}'.")
-                return when (expr.field) {
-                    "name" -> StringT
-                    "position" -> IntT
-                    "icon" -> StringT
-                    "triggers" -> StringT
-                    "triggerScope" -> StringT
-                    "effects" -> StringT
-                    "effectScope" -> StringT
-                    else -> error("Unknown field '${expr.field}' for mission")
+                if (baseType is MissionT) {
+                    return when (expr.field) {
+                        "name" -> StringT
+                        "position" -> IntT
+                        "icon" -> StringT
+                        "triggers" -> StringT
+                        "triggerScope" -> StringT
+                        "effects" -> StringT
+                        "effectScope" -> StringT
+                        else -> error("Unknown field '${expr.field}' for mission")
+                    }
+                } else if (baseType is ArrayT) {
+                    return when (expr.field) {
+                        "length" -> IntT
+                        else -> error("Unknown field '${expr.field}' for array")
+                    }
+                } else {
+                    errors.add("Line ${expr.lineNumber}: Field access on non-mission/non-array value '${PrettyPrinter.printType(baseType)}'.")
+                    null
                 }
             }
 
@@ -187,20 +195,6 @@ class AssignAndTypeChecker {
                     errors.add("Line ${expr.lineNumber}: Use of unassigned variable '${expr.name}'.")
 
                 return at?.type
-            }
-
-            is ArrayLiteralExpr -> {
-                if (expr.elements.isEmpty()) {
-                    return ArrayT
-                }
-                val firstType = exprT(expr.elements[0], envAT)
-                for (el in expr.elements) {
-                    val elType = exprT(el, envAT)
-                    if (elType != null && elType.javaClass != firstType?.javaClass) {
-                        errors.add("Line ${expr.lineNumber}: Array elements have inconsistent types: '${PrettyPrinter.printType(firstType)}' vs '${PrettyPrinter.printType(elType)}'.")
-                    }
-                }
-                return ArrayT
             }
 
             is ArrayAccess -> {
@@ -228,7 +222,7 @@ class AssignAndTypeChecker {
                         errors.add("Line ${expr.lineNumber}: Array elements have inconsistent types: '${PrettyPrinter.printType(firstType)}' vs '${PrettyPrinter.printType(elType)}'.")
                     }
                 }
-                ArrayT
+                return ArrayT
             }
 
             is BinaryOp -> {
