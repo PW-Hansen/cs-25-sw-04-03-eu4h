@@ -169,17 +169,24 @@ class Interpreter {
                     val scopeType = when (scopeVal) {
                         is CountryVal -> "country"
                         is ProvinceVal -> "province"
-                        else -> error("Invalid input, third argument must be a country or province.")
+                        is LogicalVal -> "logical"
+                        else -> error("Invalid input, third argument must be a country, province, or logical.")
                     }
 
                     when (stmt.spaceName) {
                         "trigger" ->  { 
-                            mission.triggerScope.add(scopeType)
+                            if (scopeType == "logical") {
+                                val previousScope = mission.triggerScope.last()
+                                mission.triggerScope.add(previousScope)
+                            } else {
+                                mission.triggerScope.add(scopeType)
+                            }
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
                                 is ProvinceVal -> scopeVal.province
-                                else -> error("Invalid input, third argument must be a country or province.")
+                                is LogicalVal -> scopeVal.op
+                                else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
                             val triggerScopeChange = "$newScope = {}"
@@ -193,12 +200,18 @@ class Interpreter {
                             }
                         }
                         "effect" ->  { 
-                            mission.effectScope.add(scopeType)
+                            if (scopeType == "logical") {
+                                val previousScope = mission.effectScope.last()
+                                mission.effectScope.add(previousScope)
+                            } else {
+                                mission.effectScope.add(scopeType)
+                            }
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
                                 is ProvinceVal -> scopeVal.province
-                                else -> error("Invalid input, third argument must be a country or province.")
+                                is LogicalVal -> scopeVal.op
+                                else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
                             val effectScopeChange = "$newScope = {}"

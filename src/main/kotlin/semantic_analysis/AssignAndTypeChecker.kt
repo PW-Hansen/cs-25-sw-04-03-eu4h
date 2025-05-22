@@ -140,8 +140,8 @@ class AssignAndTypeChecker {
                 val varInfo = envAT.tryGet(stmt.scope)
                 if (varInfo == null) {
                     errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' is not defined.")
-                } else if (varInfo.type != CountryT && varInfo.type != ProvinceT) {
-                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' must be either country or province.")
+                } else if (varInfo.type != CountryT && varInfo.type != ProvinceT && varInfo.type != LogicalT) {
+                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' must be either country, province, or logical.")
                 }
             }
 
