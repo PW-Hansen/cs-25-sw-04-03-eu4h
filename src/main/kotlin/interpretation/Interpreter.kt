@@ -276,14 +276,14 @@ class Interpreter {
 
                     when (stmt.spaceName) {
                         "trigger" -> {
-                            if (mission.triggers.endsWith("}")) {
+                            if (mission.triggerScopeStack.size > 1) {
                                 mission.triggers += "\n"
                             } else {
                                 error("Cannot close the ROOT scope.")
                             }
                         }
                         "effect" -> {
-                            if (mission.effects.endsWith("}")) {
+                            if (mission.effectScopeStack.size > 1) {
                                 mission.effects += "\n"
                             } else {
                                 error("Cannot close the ROOT scope.")
