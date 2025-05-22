@@ -30,12 +30,12 @@ data class ArrayAccess(val base: Expr, val index: Expr, override val lineNumber:
 
 data class MissionV(
     val name: String,
-    val position: Int,
-    val icon: String,
-    val triggers: String,
-    val triggerScope: String,
-    val effects: String,
-    val effectScope: String,
+    var position: Int,
+    var icon: String,
+    var triggers: String,
+    var triggerScope: MutableList<String>,
+    var effects: String,
+    var effectScope: MutableList<String>,
     override val lineNumber: Int
 ) : Expr
 

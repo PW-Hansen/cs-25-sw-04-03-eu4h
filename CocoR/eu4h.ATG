@@ -243,16 +243,19 @@ NotExpr<out Expr expr>           (. ArrayList<Character> unaries = new ArrayList
 
 /* Disallow users to set triggers and effects directly when declaring a mission. */
 MissionLit<out Expr expr>
-    (. int position = -1; String icon = "mission_colonial"; .) =
+    (. int position = -1; String icon = "mission_colonial";
+       ArrayList<String> triggerScope = new ArrayList<>(); 
+       triggerScope.add("country");
+       ArrayList<String> effectScope = new ArrayList<>();
+       effectScope.add("country");
+    .) =
      '@'
       STRING                  (. String name = t.val.substring(1, t.val.length()-1); .)
       [ NUM                   (. position = Integer.parseInt(t.val); .) ]
       [ STRING                (. icon = t.val.substring(1, t.val.length()-1); .) ]
       (. 
         String triggers = "";
-        String triggerScope = "country";
         String effects = "";
-        String effectScope = "country";
         /* Default position to 1 if not set. */
         if (position == -1) position = 1;
         expr = new MissionV(name, position, icon, triggers, triggerScope, effects, effectScope, t.line);

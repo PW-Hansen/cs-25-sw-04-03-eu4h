@@ -47,13 +47,13 @@ class Interpreter {
                             val baseVal = evalExpr(lhs.base, envV)
                             if (baseVal is MissionVal) {
                                 when (lhs.field) {
-                                    "name" -> baseVal.name = value.asString()
+                                    "name" -> error("Name cannot be overwritten.")
                                     "position" -> baseVal.position = value.asInt()
                                     "icon" -> baseVal.icon = value.asString()
                                     "triggers" -> baseVal.triggers = value.asString()
-                                    "triggerScope" -> baseVal.triggerScope = value.asString()
+                                    "triggerScope" -> error("Cannot assign to triggerScope directly")
                                     "effects" -> baseVal.effects = value.asString()
-                                    "effectScope" -> baseVal.effectScope = value.asString()
+                                    "effectScope" -> error("Cannot assign to triggerScope directly")
                                     else -> error("Unknown field '${lhs.field}' for mission")
                                 }
                             } else {
@@ -329,9 +329,9 @@ class Interpreter {
                                 "position" -> IntVal(baseVal.position)
                                 "icon" -> StringVal(baseVal.icon)
                                 "triggers" -> StringVal(baseVal.triggers)
-                                "triggerScope" -> StringVal(baseVal.triggerScope)
+                                "triggerScope" -> StringVal(baseVal.triggerScope.joinToString(","))
                                 "effects" -> StringVal(baseVal.effects)
-                                "effectScope" -> StringVal(baseVal.effectScope)
+                                "effectScope" -> StringVal(baseVal.effectScope.joinToString(","))
                                 else -> error("Unknown field '${expr.field}' for mission")
                             }
                         }
