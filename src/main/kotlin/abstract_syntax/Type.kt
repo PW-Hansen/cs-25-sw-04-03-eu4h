@@ -16,3 +16,5 @@ data object CountryT : Type
 data object ProvinceT : Type
 
 data object MissionT : Type
+
+data object ArrayT : Type

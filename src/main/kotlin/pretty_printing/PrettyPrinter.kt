@@ -1,6 +1,7 @@
 package org.sw_08.eu4h.pretty_printing
 
 import org.sw_08.eu4h.abstract_syntax.*
+import org.sw_08.eu4h.interpretation.ArrayVal
 import org.sw_08.eu4h.interpretation.MissionVal
 
 fun autoIndent(block: String, baseIndent: String = "\t"): String {
@@ -43,6 +44,8 @@ class PrettyPrinter {
                         printStmt(stmt.body, depth + 1)
                     ) + "\n" + indent(depth) + "endwhile\n"
                 }
+                is PushStmt -> indent(depth) + "push(" + stmt.arrayName + ", " + printExpr(stmt.value) + ");"
+                is PopStmt -> indent(depth) + "pop(" + stmt.arrayName + ");"
                 is CreateTrigger -> indent(depth) +
                     "create_trigger = (" +
                     stmt.scope + ", " +
@@ -83,6 +86,9 @@ class PrettyPrinter {
                 is ProvinceV -> expr.value.toString()
                 is MissionV -> "Mission(${expr.name}, ${expr.position}, ${expr.icon}, ${expr.triggers}, ${expr.triggerScope}, ${expr.effects}, ${expr.effectScope})"
                 is FieldAccess -> printExpr(expr.base) + "." + expr.field
+                is ArrayLiteralExpr -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
+                is ArrayAccess -> "${printExpr(expr.base)}[${printExpr(expr.index)}]"
+                is ArrayLit -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
             }
 
         fun printType(type: Type?): String =
@@ -95,6 +101,7 @@ class PrettyPrinter {
                 CountryT -> "country"
                 ProvinceT -> "province"
                 MissionT -> "mission"
+                ArrayT -> "array"
             }
 
 

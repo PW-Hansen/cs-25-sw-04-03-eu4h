@@ -42,6 +42,8 @@ class InterpreterBasicTypesTest {
         assertEquals(true, result.asBool())
     }
 
+
+
     @Test
     fun testAddIntAndInt() {
         val expr = BinaryOp(BinaryOperators.ADD, NumV(1, 1), NumV(2, 1), 1)

@@ -60,8 +60,29 @@ class Interpreter {
                                 error("Field assignment on non-mission value")
                             }
                         }
+                        is ArrayAccess -> {
+                            // Support a[0] = 5;
+                            // Recursively evaluate all but the last index
+                            fun assignArray(arrAccess: ArrayAccess, value: Val) {
+                                val base = evalExpr(arrAccess.base, envV)
+                                val idx = evalExpr(arrAccess.index, envV).asInt()
+                                if (base !is ArrayVal)
+                                    error("Assignment to non-array value")
+                                if (arrAccess.base is ArrayAccess) {
+                                    // Recurse if multidimensional, but you may need a loop for arbitrary depth
+                                    assignArray(arrAccess.base, value)
+                                } else {
+                                    if (idx < 0 || idx >= base.elements.size)
+                                        error("Array index $idx out of bounds [0, ${base.elements.size})")
+                                    base.elements[idx] = value
+                                }
+                            }
+                            assignArray(lhs, value)
+                        }
                         else -> error("Invalid assignment target")
                     }
+
+
                 }
 
                 is Comp -> {
@@ -86,6 +107,20 @@ class Interpreter {
                         evalStmt(stmt.body!!, envV)
                         condition = evalExpr(stmt.condition!!, envV)
                     }
+                }
+
+                is PushStmt -> {
+                    val arrVal = envV.tryGet(stmt.arrayName)
+                    if (arrVal !is ArrayVal) error("Cannot push to non-array variable '${stmt.arrayName}'")
+                    val value = evalExpr(stmt.value, envV)
+                    arrVal.elements.add(value)
+                }
+                
+                is PopStmt -> {
+                    val arrVal = envV.tryGet(stmt.arrayName)
+                    if (arrVal !is ArrayVal) error("Cannot pop from non-array variable '${stmt.arrayName}'")
+                    if (arrVal.elements.isEmpty()) error("Cannot pop from empty array '${stmt.arrayName}'")
+                    arrVal.elements.removeAt(arrVal.elements.size - 1)
                 }
 
                 is CreateTrigger -> {
@@ -287,19 +322,26 @@ class Interpreter {
 
                 is FieldAccess -> {
                     val baseVal = evalExpr(expr.base, envV)
-                    if (baseVal is MissionVal) {
-                        when (expr.field) {
-                            "name" -> StringVal(baseVal.name)
-                            "position" -> IntVal(baseVal.position)
-                            "icon" -> StringVal(baseVal.icon)
-                            "triggers" -> StringVal(baseVal.triggers)
-                            "triggerScope" -> StringVal(baseVal.triggerScope)
-                            "effects" -> StringVal(baseVal.effects)
-                            "effectScope" -> StringVal(baseVal.effectScope)
-                            else -> error("Unknown field '${expr.field}' for mission")
+                    when (baseVal) {
+                        is MissionVal -> {
+                            when (expr.field) {
+                                "name" -> StringVal(baseVal.name)
+                                "position" -> IntVal(baseVal.position)
+                                "icon" -> StringVal(baseVal.icon)
+                                "triggers" -> StringVal(baseVal.triggers)
+                                "triggerScope" -> StringVal(baseVal.triggerScope)
+                                "effects" -> StringVal(baseVal.effects)
+                                "effectScope" -> StringVal(baseVal.effectScope)
+                                else -> error("Unknown field '${expr.field}' for mission")
+                            }
                         }
-                    } else {
-                        error("Field access on non-mission value")
+                        is ArrayVal -> {
+                            when (expr.field) {
+                                "length" -> IntVal(baseVal.elements.size)
+                                else -> error("Unknown field '${expr.field}' for array")
+                            }
+                        }
+                        else -> error("Field access on unsupported value")
                     }
                 }
 
@@ -314,6 +356,26 @@ class Interpreter {
                             error("${evalExpr(expr.expr, envV)::class.simpleName} cannot be negative")
                         }
                     }
+                }
+
+                is ArrayLiteralExpr -> {
+                    val vals = expr.elements.map { evalExpr(it, envV) }.toMutableList()
+                    ArrayVal(vals)
+                }
+
+                is ArrayAccess -> {
+                    // Evaluate the base and index
+                    val base = evalExpr(expr.base, envV)
+                    val idxVal = evalExpr(expr.index, envV)
+                    if (base !is ArrayVal) error("Tried to index non-array value")
+                    val idx = idxVal.asInt()
+                    if (idx < 0 || idx >= base.elements.size)
+                        error("Array index $idx out of bounds [0, ${base.elements.size})")
+                    base.elements[idx]
+                }
+                is ArrayLit -> {
+                    val vals = expr.elements.map { evalExpr(it, envV) }.toMutableList()
+                    ArrayVal(vals)
                 }
             }
         }
