@@ -143,7 +143,7 @@ class Interpreter {
                     var triggerAssignment = "${stmt.triggerName} = ${value}"
 
                     // Scope compatibility check
-                    val permitted_scope = mission.triggerScope
+                    val permitted_scope = mission.triggerScope.last()
                     if (trigger.scope != permitted_scope && permitted_scope != "dual") {
                         // Invalid scope, print a warning, then create commented-out trigger assignment.
                         println("Warning: Trigger '${stmt.triggerName}' used in invalid scope on line ${stmt.lineNumber}.")
@@ -173,7 +173,7 @@ class Interpreter {
 
                     when (stmt.spaceName) {
                         "trigger" ->  { 
-                            mission.triggerScope = scopeType
+                            mission.triggerScope.add(scopeType)
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
@@ -192,7 +192,7 @@ class Interpreter {
                             }
                         }
                         "effect" ->  { 
-                            mission.effectScope = scopeType
+                            mission.effectScope.add(scopeType)
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
@@ -215,12 +215,10 @@ class Interpreter {
                 }
 
                 is CloseScope -> {
-                    /*  TODO needs logic for handling the trigger_scope changing when scopes are closed.
-                        Needs to use arrays for that. */ 
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     when (stmt.spaceName) {
-                        "trigger" -> mission.triggerScope = ""
-                        "effect" -> mission.effectScope = ""
+                        "trigger" -> mission.triggerScope.removeAt(mission.triggerScope.size - 1)
+                        "effect" -> mission.effectScope.removeAt(mission.effectScope.size - 1)
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
                     }
 
@@ -229,14 +227,14 @@ class Interpreter {
                             if (mission.triggers.endsWith("}")) {
                                 mission.triggers += "\n"
                             } else {
-                                error("Invalid trigger scope, expected '}' at the end.")
+                                error("Cannot close the ROOT scope.")
                             }
                         }
                         "effect" -> {
                             if (mission.effects.endsWith("}")) {
                                 mission.effects += "\n"
                             } else {
-                                error("Invalid effect scope, expected '}' at the end.")
+                                error("Cannot close the ROOT scope.")
                             }
                         }
                         else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
