@@ -18,3 +18,7 @@ data object ProvinceT : Type
 data object MissionT : Type
 
 data object ArrayT : Type
+
+data object LogicalT : Type
+
+enum class LogicalOp { AND, OR, NOT }

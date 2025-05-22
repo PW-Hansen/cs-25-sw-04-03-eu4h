@@ -159,6 +159,7 @@ class AssignAndTypeChecker {
             is StringV -> StringT
             is CountryV -> CountryT
             is ProvinceV -> ProvinceT
+            is LogicalV -> LogicalT
             is MissionV -> MissionT
             is ArrayLiteralExpr -> ArrayT
 

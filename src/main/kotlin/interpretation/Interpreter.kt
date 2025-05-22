@@ -10,6 +10,7 @@ fun typeMatches(type: Type, value: Val): Boolean {
         is StringT -> value is StringVal
         is CountryT -> value is CountryVal
         is ProvinceT -> value is ProvinceVal
+        is LogicalT -> value is LogicalVal
         is MissionT -> value is MissionVal
         else -> false
     }
@@ -251,6 +252,7 @@ class Interpreter {
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
+                is LogicalV -> LogicalVal(expr.op)
                 is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScope, expr.effects, expr.effectScope)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 

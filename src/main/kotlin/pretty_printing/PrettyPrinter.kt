@@ -84,6 +84,7 @@ class PrettyPrinter {
                 is StringV -> expr.value.toString()
                 is CountryV -> expr.value.toString()
                 is ProvinceV -> expr.value.toString()
+                is LogicalV -> expr.op.toString()
                 is MissionV -> "Mission(${expr.name}, ${expr.position}, ${expr.icon}, ${expr.triggers}, ${expr.triggerScope}, ${expr.effects}, ${expr.effectScope})"
                 is FieldAccess -> printExpr(expr.base) + "." + expr.field
                 is ArrayLiteralExpr -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
@@ -101,6 +102,7 @@ class PrettyPrinter {
                 CountryT -> "country"
                 ProvinceT -> "province"
                 MissionT -> "mission"
+                LogicalT -> "logical"
                 ArrayT -> "array"
             }
 

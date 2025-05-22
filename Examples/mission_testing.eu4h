@@ -15,3 +15,6 @@ close_scope = (my_mission, "trigger");
 print(my_mission.triggerScope);
 open_scope = (my_mission, "trigger", france);
 print(my_mission.triggerScope);
+
+logical my_logical = NOT;
+print(my_logical);
