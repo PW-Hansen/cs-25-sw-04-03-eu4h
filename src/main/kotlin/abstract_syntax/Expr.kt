@@ -24,6 +24,10 @@ class CountryV(val value: String, override val lineNumber: Int) : Expr
 
 class ProvinceV(val value: String, override val lineNumber: Int) : Expr
 
+data class ArrayLiteralExpr(val elements: List<Expr>, override val lineNumber: Int) : Expr
+
+data class ArrayAccess(val base: Expr, val index: Expr, override val lineNumber: Int) : Expr
+
 data class MissionV(
     val name: String,
     val position: Int,
@@ -36,6 +40,8 @@ data class MissionV(
 ) : Expr
 
 class FieldAccess(val base: Expr, val field: String, override val lineNumber: Int) : Expr
+
+data class ArrayLit(val elements: List<Expr>, override val lineNumber: Int) : Expr
 
 enum class UnaryOperators {
     NOT, NEG

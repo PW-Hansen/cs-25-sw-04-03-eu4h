@@ -25,6 +25,10 @@ class If(var condition: Expr?, var thenBody: Stmt?, var elseBody: Stmt?, overrid
 
 class While(var condition: Expr?, var body: Stmt?, override val lineNumber: Int) : Stmt
 
+class PushStmt(val arrayName: String, val value: Expr, override val lineNumber: Int) : Stmt
+
+class PopStmt(val arrayName: String, override val lineNumber: Int) : Stmt
+
 data class CreateTrigger(val scope: String, val name: String, val type: Type, override val lineNumber: Int) : Stmt
 
 data class AssignTrigger(val missionName: String, val triggerName: String, val expr: Expr, override val lineNumber: Int) : Stmt
