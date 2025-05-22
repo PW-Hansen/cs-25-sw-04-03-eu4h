@@ -202,6 +202,10 @@ class Interpreter {
                         error("Array index $idx out of bounds [0, ${base.elements.size})")
                     base.elements[idx]
                 }
+                is ArrayLit -> {
+                    val vals = expr.elements.map { evalExpr(it, envV) }.toMutableList()
+                    ArrayVal(vals)
+                }
             }
         }
     }

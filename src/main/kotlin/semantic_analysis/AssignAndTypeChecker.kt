@@ -183,6 +183,20 @@ class AssignAndTypeChecker {
                 return null
             }
 
+            is ArrayLit -> {
+                if (expr.elements.isEmpty()) {
+                    return ArrayT
+                }
+                val firstType = exprT(expr.elements[0], envAT)
+                for (el in expr.elements) {
+                    val elType = exprT(el, envAT)
+                    if (elType != null && elType.javaClass != firstType?.javaClass) {
+                        errors.add("Line ${expr.lineNumber}: Array elements have inconsistent types: '${PrettyPrinter.printType(firstType)}' vs '${PrettyPrinter.printType(elType)}'.")
+                    }
+                }
+                ArrayT
+            }
+
             is BinaryOp -> {
                 val typeL = exprT(expr.exprLeft, envAT)
                 val typeR = exprT(expr.exprRight, envAT)

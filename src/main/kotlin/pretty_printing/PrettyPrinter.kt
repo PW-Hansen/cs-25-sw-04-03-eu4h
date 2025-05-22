@@ -56,6 +56,7 @@ class PrettyPrinter {
                 is FieldAccess -> printExpr(expr.base) + "." + expr.field
                 is ArrayLiteralExpr -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
                 is ArrayAccess -> "${printExpr(expr.base)}[${printExpr(expr.index)}]"
+                is ArrayLit -> expr.elements.joinToString(prefix = "[", postfix = "]") { printExpr(it) }
             }
 
         fun printType(type: Type?): String =
