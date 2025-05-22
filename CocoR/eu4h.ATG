@@ -194,6 +194,7 @@ Type<out Type type>   (. type = null; .)
     | "array"         (. type = ArrayT.INSTANCE; .)
     | "country"       (. type = CountryT.INSTANCE; .)
     | "province"      (. type = ProvinceT.INSTANCE; .)
+    | "logical"       (. type = LogicalT.INSTANCE; .)
     | "mission"       (. type = MissionT.INSTANCE; .)
     .
 
@@ -314,9 +315,9 @@ OpenScopeStmt<out Stmt stmt> =
                 SemErr("The second argument of open_scope must be \"trigger\" or \"effect\".");
             }
         .)
-        IDENT      (. String scopeVar = t.val; .)
+        Expr<out Expr scopeExpr>
     ')' ';'
-    (. stmt = new OpenScope(missionName, spaceName, scopeVar, t.line); .)
+    (. stmt = new OpenScope(missionName, spaceName, scopeExpr, t.line); .)
 .
 
 CloseScopeStmt<out Stmt stmt> =
@@ -354,6 +355,9 @@ Primary<out Expr expr>
     | MissionLit<out expr>
     | "true"                  (. expr = new BoolV(true, t.line);  .)
     | "false"                 (. expr = new BoolV(false, t.line); .)
+    | "AND"    (. expr = new LogicalV(LogicalOp.AND, t.line); .)
+    | "OR"     (. expr = new LogicalV(LogicalOp.OR, t.line); .)
+    | "NOT"    (. expr = new LogicalV(LogicalOp.NOT, t.line); .)
     | '(' Expr<out expr> ')'
 .
 

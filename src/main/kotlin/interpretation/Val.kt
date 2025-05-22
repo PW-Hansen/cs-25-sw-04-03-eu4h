@@ -1,6 +1,7 @@
 package org.sw_08.eu4h.interpretation
 
 import org.sw_08.eu4h.abstract_syntax.Type
+import org.sw_08.eu4h.abstract_syntax.LogicalOp
 
 sealed interface Val {
     fun asInt() : Int = (this as IntVal).n
@@ -57,4 +58,9 @@ data class TriggerDef(
 )
 
 data class ArrayVal(val elements: MutableList<Val>) : Val {
-    override fun asString(): String = elements.toString()}
+    override fun asString(): String = elements.toString()
+}
+
+data class LogicalVal(val op: LogicalOp) : Val {
+    override fun toString() = op.name
+}

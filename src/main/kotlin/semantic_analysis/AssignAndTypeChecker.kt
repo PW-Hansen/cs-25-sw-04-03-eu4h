@@ -137,11 +137,11 @@ class AssignAndTypeChecker {
             }
 
             is OpenScope -> {
-                val varInfo = envAT.tryGet(stmt.scope)
-                if (varInfo == null) {
-                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' is not defined.")
-                } else if (varInfo.type != CountryT && varInfo.type != ProvinceT) {
-                    errors.add("Line ${stmt.lineNumber}: Scope variable '${stmt.scope}' must be either country or province.")
+                val exprType = exprT(stmt.scope, envAT)
+                if (exprType == null) {
+                    errors.add("Line ${stmt.lineNumber}: Scope expression is not well-typed.")
+                } else if (exprType != CountryT && exprType != ProvinceT && exprType != LogicalT) {
+                    errors.add("Line ${stmt.lineNumber}: Scope expression must be of type country, province, or logical.")
                 }
             }
 
@@ -159,6 +159,7 @@ class AssignAndTypeChecker {
             is StringV -> StringT
             is CountryV -> CountryT
             is ProvinceV -> ProvinceT
+            is LogicalV -> LogicalT
             is MissionV -> MissionT
             is ArrayLiteralExpr -> ArrayT
 

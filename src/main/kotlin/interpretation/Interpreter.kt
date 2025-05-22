@@ -10,6 +10,7 @@ fun typeMatches(type: Type, value: Val): Boolean {
         is StringT -> value is StringVal
         is CountryT -> value is CountryVal
         is ProvinceT -> value is ProvinceVal
+        is LogicalT -> value is LogicalVal
         is MissionT -> value is MissionVal
         else -> false
     }
@@ -163,22 +164,29 @@ class Interpreter {
 
                 is OpenScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
-                    val scopeVal = envV.tryGet(stmt.scope) ?: error("Scope variable '${stmt.scope}' not found.")
+                    val scopeVal = evalExpr(stmt.scope, envV) ?: error("Scope value could not be evaluated.")
 
                     val scopeType = when (scopeVal) {
                         is CountryVal -> "country"
                         is ProvinceVal -> "province"
-                        else -> error("Invalid input, third argument must be a country or province.")
+                        is LogicalVal -> "logical"
+                        else -> error("Invalid input, third argument must be a country, province, or logical.")
                     }
 
                     when (stmt.spaceName) {
                         "trigger" ->  { 
-                            mission.triggerScope.add(scopeType)
+                            if (scopeType == "logical") {
+                                val previousScope = mission.triggerScope.last()
+                                mission.triggerScope.add(previousScope)
+                            } else {
+                                mission.triggerScope.add(scopeType)
+                            }
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
                                 is ProvinceVal -> scopeVal.province
-                                else -> error("Invalid input, third argument must be a country or province.")
+                                is LogicalVal -> scopeVal.op
+                                else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
                             val triggerScopeChange = "$newScope = {}"
@@ -192,12 +200,18 @@ class Interpreter {
                             }
                         }
                         "effect" ->  { 
-                            mission.effectScope.add(scopeType)
+                            if (scopeType == "logical") {
+                                val previousScope = mission.effectScope.last()
+                                mission.effectScope.add(previousScope)
+                            } else {
+                                mission.effectScope.add(scopeType)
+                            }
 
                             val newScope = when (scopeVal) {
                                 is CountryVal -> scopeVal.country
                                 is ProvinceVal -> scopeVal.province
-                                else -> error("Invalid input, third argument must be a country or province.")
+                                is LogicalVal -> scopeVal.op
+                                else -> error("Invalid input, third argument must be a country, province, or logical.")
                             }
 
                             val effectScopeChange = "$newScope = {}"
@@ -251,6 +265,7 @@ class Interpreter {
                 is StringV -> StringVal(expr.value)
                 is CountryV -> CountryVal(expr.value)
                 is ProvinceV -> ProvinceVal(expr.value)
+                is LogicalV -> LogicalVal(expr.op)
                 is MissionV -> MissionVal(expr.name, expr.position, expr.icon, expr.triggers, expr.triggerScope, expr.effects, expr.effectScope)
                 is Ref -> envV.tryGet(expr.name)!! // The static analysis ensures this value is never null
 

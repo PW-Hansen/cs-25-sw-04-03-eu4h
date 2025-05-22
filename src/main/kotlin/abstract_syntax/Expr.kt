@@ -43,6 +43,8 @@ class FieldAccess(val base: Expr, val field: String, override val lineNumber: In
 
 data class ArrayLit(val elements: List<Expr>, override val lineNumber: Int) : Expr
 
+class LogicalV(val op: LogicalOp, override val lineNumber: Int) : Expr
+
 enum class UnaryOperators {
     NOT, NEG
 }
