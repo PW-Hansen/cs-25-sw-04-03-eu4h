@@ -6,6 +6,8 @@ mission my_mission = @ "this_is_my_mission" 3;
 
 print(my_mission.triggerScope);
 
+logical my_logical = NOT;
+
 create_trigger = (province, "artillery_in_province", int);
 assign_trigger = (my_mission, "artillery_in_province", 10);
 open_scope = (my_mission, "trigger", paris);
@@ -13,8 +15,9 @@ print(my_mission.triggerScope);
 assign_trigger = (my_mission, "artillery_in_province", 10);
 close_scope = (my_mission, "trigger");
 print(my_mission.triggerScope);
-open_scope = (my_mission, "trigger", france);
+open_scope = (my_mission, "trigger", NOT);
+open_scope = (my_mission, "trigger", OR);
+
 print(my_mission.triggerScope);
 
-logical my_logical = NOT;
-print(my_logical);
+print(my_mission);

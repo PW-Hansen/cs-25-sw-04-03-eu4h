@@ -164,7 +164,7 @@ class Interpreter {
 
                 is OpenScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
-                    val scopeVal = envV.tryGet(stmt.scope) ?: error("Scope variable '${stmt.scope}' not found.")
+                    val scopeVal = evalExpr(stmt.scope, envV) ?: error("Scope value could not be evaluated.")
 
                     val scopeType = when (scopeVal) {
                         is CountryVal -> "country"

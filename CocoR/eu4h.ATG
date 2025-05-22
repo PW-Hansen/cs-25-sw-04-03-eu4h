@@ -315,9 +315,9 @@ OpenScopeStmt<out Stmt stmt> =
                 SemErr("The second argument of open_scope must be \"trigger\" or \"effect\".");
             }
         .)
-        IDENT      (. String scopeVar = t.val; .)
+        Expr<out Expr scopeExpr>
     ')' ';'
-    (. stmt = new OpenScope(missionName, spaceName, scopeVar, t.line); .)
+    (. stmt = new OpenScope(missionName, spaceName, scopeExpr, t.line); .)
 .
 
 CloseScopeStmt<out Stmt stmt> =
