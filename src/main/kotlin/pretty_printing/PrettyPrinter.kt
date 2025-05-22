@@ -58,6 +58,18 @@ class PrettyPrinter {
                     "\"" + stmt.triggerName + "\", " +
                     printExpr(stmt.expr) +
                     ");"
+                is CreateEffect -> indent(depth) +
+                    "create_effect = (" +
+                    stmt.scope + ", " +
+                    "\"" + stmt.name + "\", " +
+                    printType(stmt.type) +
+                    ");"
+                is AssignEffect -> indent(depth) +
+                    "assign_effect = (" +
+                    stmt.missionName + ", " +
+                    "\"" + stmt.effectName + "\", " +
+                    printExpr(stmt.expr) +
+                    ");"
                 
                 is OpenScope -> indent(depth) +
                     "open_scope = (" +

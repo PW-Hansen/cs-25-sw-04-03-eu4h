@@ -136,6 +136,24 @@ class AssignAndTypeChecker {
                 }
             }
 
+            is CreateEffect -> {
+                if (triggerTypes.containsKey(stmt.name)) {
+                    errors.add("Line ${stmt.lineNumber}: Effect '${stmt.name}' is already defined.")
+                } else {
+                    triggerTypes[stmt.name] = stmt.type
+                }
+            }
+
+            is AssignEffect -> {
+                val exprType = exprT(stmt.expr, envAT)
+                val expectedType = triggerTypes[stmt.effectName]
+                if (expectedType == null) {
+                    errors.add("Line ${stmt.lineNumber}: Effect '${stmt.effectName}' is not defined.")
+                } else if (exprType != null && exprType.javaClass != expectedType.javaClass) {
+                    errors.add("Line ${stmt.lineNumber}: Effect '${stmt.effectName}' expects type '${PrettyPrinter.printType(expectedType)}', but got '${PrettyPrinter.printType(exprType)}'.")
+                }
+            }
+
             is OpenScope -> {
                 val exprType = exprT(stmt.scope, envAT)
                 if (exprType == null) {

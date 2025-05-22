@@ -117,6 +117,8 @@ Stmt<out Stmt stmt> =       (. stmt = Skip.INSTANCE; .)
     | PopStmt<out stmt>
     | CreateTriggerStmt<out stmt>
     | AssignTriggerStmt<out stmt> 
+    | CreateEffectStmt<out stmt>
+    | AssignEffectStmt<out stmt>
     | OpenScopeStmt<out stmt> 
     | CloseScopeStmt<out stmt> )
 .
@@ -289,6 +291,24 @@ AssignTriggerStmt<out Stmt stmt> =
         Expr<out Expr expr>
     ')' ';'
     (. stmt = new AssignTrigger(missionName, triggerName, expr, t.line); .)
+.
+
+CreateEffectStmt<out Stmt stmt> =
+    "create_effect" '=' '('
+        ScopeDef<out String scope> ',' 
+        STRING     (. String effectName = t.val.substring(1, t.val.length()-1); .) ',' 
+        Type<out Type type>
+    ')' ';'
+    (. stmt = new CreateEffect(scope, effectName, type, t.line); .)
+.
+
+AssignEffectStmt<out Stmt stmt> =
+    "assign_effect" '=' '('
+        IDENT      (. String missionName = t.val; .) ',' 
+        STRING     (. String effectName = t.val.substring(1, t.val.length()-1); .) ',' 
+        Expr<out Expr expr>
+    ')' ';'
+    (. stmt = new AssignEffect(missionName, effectName, expr, t.line); .)
 .
 
 ArrayLit<out Expr expr> =

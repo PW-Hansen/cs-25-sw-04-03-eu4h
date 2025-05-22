@@ -162,6 +162,44 @@ class Interpreter {
                     }
                 }
 
+                is CreateEffect -> {
+                    if (triggers.containsKey(stmt.name)) {
+                        error("Effect '${stmt.name}' already exists.")
+                    }
+                    triggers[stmt.name] = TriggerDef(stmt.scope, stmt.type)
+                }
+
+                is AssignEffect -> {
+                    val effect = triggers[stmt.effectName] ?: error("Effect '${stmt.effectName}' not found.")
+                    val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
+                    val value = evalExpr(stmt.expr, envV)
+                    // Type check
+                    if (!typeMatches(effect.type, value)) {
+                        error("Type mismatch: effect '${stmt.effectName}' expects ${effect.type}, got ${value::class.simpleName}")
+                    }
+
+                    // Effect assignment value.
+                    var effectAssignment = "${stmt.effectName} = ${value}"
+
+                    // Scope compatibility check
+                    val permitted_scope = mission.effectScope.last()
+                    if (effect.scope != permitted_scope && permitted_scope != "dual") {
+                        // Invalid scope, print a warning, then create commented-out effect assignment.
+                        println("Warning: Effect '${stmt.effectName}' used in invalid scope on line ${stmt.lineNumber}.")
+                        // # is used to comment out content in EU4 script files.
+                        effectAssignment = "# $effectAssignment # Invalid scope usage, permitted scope is '$permitted_scope'."
+                    } 
+
+                    // Extending the effect string with the new effect.
+                    if (mission.effects == "") {
+                        mission.effects = effectAssignment
+                    } else if (mission.effects.endsWith("}")) {
+                        mission.effects = mission.effects.substring(0, mission.effects.length - 1) + "\n$effectAssignment\n}"
+                    } else {
+                        mission.effects += "\n$effectAssignment"
+                    }
+                }
+
                 is OpenScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     val scopeVal = evalExpr(stmt.scope, envV) ?: error("Scope value could not be evaluated.")

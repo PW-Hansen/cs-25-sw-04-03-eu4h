@@ -33,6 +33,10 @@ data class CreateTrigger(val scope: String, val name: String, val type: Type, ov
 
 data class AssignTrigger(val missionName: String, val triggerName: String, val expr: Expr, override val lineNumber: Int) : Stmt
 
+data class CreateEffect(val scope: String, val name: String, val type: Type, override val lineNumber: Int) : Stmt
+
+data class AssignEffect(val missionName: String, val effectName: String, val expr: Expr, override val lineNumber: Int) : Stmt
+
 data class OpenScope(val missionName: String, val spaceName: String, val scope: Expr, override val lineNumber: Int) : Stmt
 
 data class CloseScope(val missionName: String, val spaceName: String, override val lineNumber: Int) : Stmt

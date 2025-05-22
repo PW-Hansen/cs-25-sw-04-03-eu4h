@@ -20,4 +20,7 @@ open_scope = (my_mission, "trigger", OR);
 
 print(my_mission.triggerScope);
 
+create_effect = (country, "add_adm_power", int);
+assign_effect = (my_mission, "add_adm_power", -100);
+
 print(my_mission);
