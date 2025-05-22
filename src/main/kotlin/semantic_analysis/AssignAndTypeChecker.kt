@@ -178,6 +178,12 @@ class AssignAndTypeChecker {
                         if (typeL != null && typeR != null) {
                             if (typeL is IntT && typeR is IntT) {
                                 // Accepted
+                            } else if (typeL is DoubleT && typeR is DoubleT) {
+                                // Accepted
+                            } else if (typeL is DoubleT && typeR is IntT) {
+                                // Accepted
+                            } else if (typeL is IntT && typeR is DoubleT) {
+                                // Accepted
                             } else if (typeL is StringT && typeR is StringT) {
                                 // Accepted
                             } else {
@@ -188,10 +194,10 @@ class AssignAndTypeChecker {
                     BinaryOperators.SUB,
                     BinaryOperators.MUL,
                     BinaryOperators.LT -> {
-                        if (typeL != null && typeL !is IntT)
-                            errors.add("Line ${expr.exprLeft.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a left operand of type 'int', but got '${PrettyPrinter.printType(typeL)}'.")
-                        if (typeR != null && typeR !is IntT)
-                            errors.add("Line ${expr.exprRight.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a right operand of type 'int', but got '${PrettyPrinter.printType(typeL)}'.")
+                        if (typeL != null && typeL !is IntT && typeL !is DoubleT)
+                            errors.add("Line ${expr.exprLeft.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a left operand of type 'int' or 'double', but got '${PrettyPrinter.printType(typeL)}'.")
+                        if (typeR != null && typeR !is IntT && typeR !is DoubleT)
+                            errors.add("Line ${expr.exprRight.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a right operand of type 'int' or 'double', but got '${PrettyPrinter.printType(typeL)}'.")
                     }
                     BinaryOperators.OR -> {
                         if (typeL != null && typeL !is BoolT)
@@ -208,10 +214,19 @@ class AssignAndTypeChecker {
                 return when (expr.op) {
                     BinaryOperators.ADD -> {
                         if (typeL is IntT && typeR is IntT) { IntT }
+                        else if (typeL is DoubleT && typeR is DoubleT) { DoubleT }
+                        else if (typeL is DoubleT && typeR is IntT) { DoubleT }
+                        else if (typeL is IntT && typeR is DoubleT) { DoubleT }
                         else if (typeL is StringT && typeR is StringT)  { StringT }
                         else { null }
                     }
-                    BinaryOperators.SUB, BinaryOperators.MUL -> IntT
+                    BinaryOperators.SUB, BinaryOperators.MUL -> {
+                        if (typeL is IntT && typeR is IntT) { IntT }
+                        else if (typeL is DoubleT && typeR is DoubleT) { DoubleT }
+                        else if (typeL is DoubleT && typeR is IntT) { DoubleT }
+                        else if (typeL is IntT && typeR is DoubleT) { DoubleT }
+                        else { null }
+                    }
                     BinaryOperators.LT, BinaryOperators.EQ, BinaryOperators.OR -> BoolT
                 }
             }
@@ -225,14 +240,18 @@ class AssignAndTypeChecker {
                             errors.add("Line ${expr.lineNumber}: Operator '${PrettyPrinter.unaryOpString(expr.op)}' expected an operand of type 'bool', but got '${PrettyPrinter.printType(type)}'.")
                     }
                     UnaryOperators.NEG -> {
-                        if (type != null && type !is IntT)
-                            errors.add("Line ${expr.lineNumber}: Operator '${PrettyPrinter.unaryOpString(expr.op)}' expected an operand of type 'int', but got '${PrettyPrinter.printType(type)}'.")
+                        if (type != null && type !is IntT && type !is DoubleT)
+                            errors.add("Line ${expr.lineNumber}: Operator '${PrettyPrinter.unaryOpString(expr.op)}' expected an operand of type 'int' or 'double', but got '${PrettyPrinter.printType(type)}'.")
                     }
                 }
 
                 return when (expr.op) {
                     UnaryOperators.NOT -> BoolT
-                    UnaryOperators.NEG -> IntT
+                    UnaryOperators.NEG -> {
+                        if(type is IntT){ IntT }
+                        else if (type is DoubleT) { DoubleT }
+                        else { null }
+                    }
                 }
             }
         }
