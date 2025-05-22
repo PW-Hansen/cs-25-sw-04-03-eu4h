@@ -217,13 +217,55 @@ class Interpreter {
                                 StringVal(v1.asString() + v2.asString())
                             } else if (v1 is IntVal && v2 is IntVal) {
                                 IntVal(v1.asInt() + v2.asInt())
+                            } else if (v1 is DoubleVal && v2 is DoubleVal){
+                                DoubleVal(v1.asDouble() + v2.asDouble())
+                            }  else if (v1 is IntVal && v2 is DoubleVal){
+                                DoubleVal(v1.asInt() + v2.asDouble())
+                            } else if (v1 is DoubleVal && v2 is IntVal){
+                                DoubleVal(v1.asDouble() + v2.asInt())
                             } else {
                                 error("Cannot add ${v1::class.simpleName} and ${v2::class.simpleName}")
                             }
                         }
-                        BinaryOperators.SUB -> IntVal(v1.asInt() - v2.asInt())
-                        BinaryOperators.MUL -> IntVal(v1.asInt() * v2.asInt())
-                        BinaryOperators.LT -> BoolVal(v1.asInt() < v2.asInt())
+                        BinaryOperators.SUB -> {
+                            if (v1 is IntVal && v2 is IntVal) {
+                                IntVal(v1.asInt() - v2.asInt())
+                            } else if (v1 is DoubleVal && v2 is DoubleVal){
+                                DoubleVal(v1.asDouble() - v2.asDouble())
+                            }  else if (v1 is IntVal && v2 is DoubleVal){
+                                DoubleVal(v1.asInt() - v2.asDouble())
+                            } else if (v1 is DoubleVal && v2 is IntVal){
+                                DoubleVal(v1.asDouble() - v2.asInt())
+                            } else {
+                                error("Cannot subtract ${v1::class.simpleName} and ${v2::class.simpleName}")
+                            }
+                        }
+                        BinaryOperators.MUL -> {
+                            if (v1 is IntVal && v2 is IntVal) {
+                                IntVal(v1.asInt() * v2.asInt())
+                            } else if (v1 is DoubleVal && v2 is DoubleVal){
+                                DoubleVal(v1.asDouble() * v2.asDouble())
+                            }  else if (v1 is IntVal && v2 is DoubleVal){
+                                DoubleVal(v1.asInt() * v2.asDouble())
+                            } else if (v1 is DoubleVal && v2 is IntVal){
+                                DoubleVal(v1.asDouble() * v2.asInt())
+                            } else {
+                                error("Cannot multiply ${v1::class.simpleName} and ${v2::class.simpleName}")
+                            }
+                        }
+                        BinaryOperators.LT -> {
+                            if (v1 is IntVal && v2 is IntVal) {
+                                BoolVal(v1.asInt() < v2.asInt())
+                            } else if (v1 is DoubleVal && v2 is DoubleVal){
+                                BoolVal(v1.asDouble() < v2.asDouble())
+                            }  else if (v1 is IntVal && v2 is DoubleVal){
+                                BoolVal(v1.asInt() < v2.asDouble())
+                            } else if (v1 is DoubleVal && v2 is IntVal){
+                                BoolVal(v1.asDouble() < v2.asInt())
+                            } else {
+                                error("Cannot compare ${v1::class.simpleName} and ${v2::class.simpleName}")
+                            }
+                        }
                         BinaryOperators.EQ -> BoolVal(v1 == v2) // IntVal and BoolVal are "data classes" and auto-generate "equals" based on member-values.
                         BinaryOperators.OR -> BoolVal(v1.asBool() || v2.asBool())
                     }
@@ -249,7 +291,15 @@ class Interpreter {
 
                 is UnaryOp -> when (expr.op) {
                     UnaryOperators.NOT -> BoolVal(!(evalExpr(expr.expr, envV).asBool()))
-                    UnaryOperators.NEG -> IntVal(-(evalExpr(expr.expr, envV).asInt()))
+                    UnaryOperators.NEG -> {
+                        if(evalExpr(expr.expr, envV) is IntVal){
+                            IntVal(-(evalExpr(expr.expr, envV).asInt()))
+                        } else if (evalExpr(expr.expr, envV) is DoubleVal){
+                            DoubleVal(-(evalExpr(expr.expr, envV).asDouble()))
+                        } else {
+                            error("${evalExpr(expr.expr, envV)::class.simpleName} cannot be negative")
+                        }
+                    }
                 }
             }
         }
