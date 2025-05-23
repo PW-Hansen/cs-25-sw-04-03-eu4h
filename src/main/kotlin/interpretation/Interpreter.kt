@@ -269,14 +269,9 @@ class Interpreter {
                 is CloseScope -> {
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     when (stmt.spaceName) {
-                        "trigger" -> mission.triggerScopeStack.removeAt(mission.triggerScopeStack.size - 1)
-                        "effect" -> mission.effectScopeStack.removeAt(mission.effectScopeStack.size - 1)
-                        else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
-                    }
-
-                    when (stmt.spaceName) {
                         "trigger" -> {
                             if (mission.triggerScopeStack.size > 1) {
+                                mission.triggerScopeStack.removeAt(mission.triggerScopeStack.size - 1)
                                 mission.triggers += "\n"
                             } else {
                                 error("Cannot close the ROOT scope.")
@@ -284,13 +279,14 @@ class Interpreter {
                         }
                         "effect" -> {
                             if (mission.effectScopeStack.size > 1) {
+                                mission.effectScopeStack.removeAt(mission.effectScopeStack.size - 1)
                                 mission.effects += "\n"
                             } else {
                                 error("Cannot close the ROOT scope.")
                             }
                         }
-                        else -> error("Invalid space name '${stmt.spaceName}'. Expected 'trigger' or 'effect'.")
-                    }
+                        else -> error("Space name must be 'trigger' or 'effect'.")
+                    }                
                 }
             }
         }
