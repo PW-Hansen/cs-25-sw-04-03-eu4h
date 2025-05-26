@@ -276,7 +276,7 @@ ScopeDef<out String scope>
 
 /* Trigger creation and setting. */
 CreateTriggerStmt<out Stmt stmt> =
-    "create_trigger" '=' '('
+    "create_trigger" '('
         ScopeDef<out String scope> ',' 
         STRING     (. String triggerName = t.val.substring(1, t.val.length()-1); .) ',' 
         Type<out Type type>
@@ -285,7 +285,7 @@ CreateTriggerStmt<out Stmt stmt> =
 .
 
 AssignTriggerStmt<out Stmt stmt> =
-    "assign_trigger" '=' '('
+    "assign_trigger" '('
         IDENT      (. String missionName = t.val; .) ',' 
         STRING     (. String triggerName = t.val.substring(1, t.val.length()-1); .) ',' 
         Expr<out Expr expr>
@@ -294,7 +294,7 @@ AssignTriggerStmt<out Stmt stmt> =
 .
 
 CreateEffectStmt<out Stmt stmt> =
-    "create_effect" '=' '('
+    "create_effect" '('
         ScopeDef<out String scope> ',' 
         STRING     (. String effectName = t.val.substring(1, t.val.length()-1); .) ',' 
         Type<out Type type>
@@ -303,7 +303,7 @@ CreateEffectStmt<out Stmt stmt> =
 .
 
 AssignEffectStmt<out Stmt stmt> =
-    "assign_effect" '=' '('
+    "assign_effect" '('
         IDENT      (. String missionName = t.val; .) ',' 
         STRING     (. String effectName = t.val.substring(1, t.val.length()-1); .) ',' 
         Expr<out Expr expr>
@@ -327,7 +327,7 @@ ArrayAccess<Expr arr> =
 .
 
 OpenScopeStmt<out Stmt stmt> =
-    "open_scope" '=' '('
+    "open_scope" '('
         IDENT      (. String missionName = t.val; .) ',' 
         STRING     (. String spaceName = t.val.substring(1, t.val.length()-1); .) ',' 
         (.
@@ -341,7 +341,7 @@ OpenScopeStmt<out Stmt stmt> =
 .
 
 CloseScopeStmt<out Stmt stmt> =
-    "close_scope" '=' '('
+    "close_scope" '('
         IDENT      (. String missionName = t.val; .) ',' 
         STRING     (. String spaceName = t.val.substring(1, t.val.length()-1); .) 
         (.
