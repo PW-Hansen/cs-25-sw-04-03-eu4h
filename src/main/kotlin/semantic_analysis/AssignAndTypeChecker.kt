@@ -280,6 +280,12 @@ class AssignAndTypeChecker {
                         if (typeR != null && typeR !is BoolT)
                             errors.add("Line ${expr.exprRight.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a right operand of type 'bool', but got '${PrettyPrinter.printType(typeL)}'.")
                     }
+                    BinaryOperators.AND -> {
+                        if (typeL != null && typeL !is BoolT)
+                            errors.add("Line ${expr.exprLeft.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a left operand of type 'bool', but got '${PrettyPrinter.printType(typeL)}'.")
+                        if (typeR != null && typeR !is BoolT)
+                            errors.add("Line ${expr.exprRight.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected a right operand of type 'bool', but got '${PrettyPrinter.printType(typeL)}'.")
+                    }
                     BinaryOperators.EQ -> {
                         if (typeL != null && typeR != null && typeL.javaClass != typeR.javaClass)
                             errors.add("Line ${expr.lineNumber}: Operator '${PrettyPrinter.binaryOpString(expr.op)}' expected operands of the same type, but got '${PrettyPrinter.printType(typeL)}' and '${PrettyPrinter.printType(typeR)}'.")
@@ -302,7 +308,7 @@ class AssignAndTypeChecker {
                         else if (typeL is IntT && typeR is DoubleT) { DoubleT }
                         else { null }
                     }
-                    BinaryOperators.LT, BinaryOperators.EQ, BinaryOperators.OR -> BoolT
+                    BinaryOperators.LT, BinaryOperators.EQ, BinaryOperators.OR, BinaryOperators.AND -> BoolT
                 }
             }
 

@@ -130,6 +130,7 @@ class PrettyPrinter {
                 BinaryOperators.LT -> " < "
                 BinaryOperators.EQ -> " = "
                 BinaryOperators.OR -> " || "
+                BinaryOperators.AND -> " && "
             }
 
         fun unaryOpString(op: UnaryOperators): String =

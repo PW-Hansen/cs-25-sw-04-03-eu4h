@@ -208,6 +208,13 @@ Expr<out Expr expr>
     }
 .
 
+Expr<out Expr expr>
+    = AndExpr<out expr>
+    { "&&"                 (. int lineNumber = t.line; .)
+    AndExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.AND, expr, expr2, lineNumber); .)
+    }
+.
+
 EqExpr<out Expr expr>    (. String op = null; int lineNumber = -1; .)
     = RelExpr<out expr>
     { ( '='                     (. op = "="; lineNumber = t.line; .)

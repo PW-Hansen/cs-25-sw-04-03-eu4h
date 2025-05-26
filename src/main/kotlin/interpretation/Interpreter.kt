@@ -364,6 +364,7 @@ class Interpreter {
                         }
                         BinaryOperators.EQ -> BoolVal(v1 == v2) // IntVal and BoolVal are "data classes" and auto-generate "equals" based on member-values.
                         BinaryOperators.OR -> BoolVal(v1.asBool() || v2.asBool())
+                        BinaryOperators.AND -> BoolVal(v1.asBool() && v2.asBool())
                     }
                 }
 
