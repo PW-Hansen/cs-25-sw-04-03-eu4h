@@ -50,5 +50,5 @@ enum class UnaryOperators {
 }
 
 enum class BinaryOperators {
-    ADD, SUB, MUL, LT, EQ, OR
+    ADD, SUB, MUL, LT, EQ, OR, AND
 }

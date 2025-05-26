@@ -167,7 +167,7 @@ class Interpreter {
                     if (effects.containsKey(stmt.name)) {
                         error("Effect '${stmt.name}' already exists.")
                     }
-                    effects[stmt.name] = TriggerDef(stmt.scope, stmt.type)
+                    effects[stmt.name] = EffectDef(stmt.scope, stmt.type)
                 }
 
                 is AssignEffect -> {
