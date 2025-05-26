@@ -13,12 +13,13 @@ import org.sw_08.eu4h.interpretation.TriggerDef
 import syntactic_analysis.Parser
 import syntactic_analysis.Scanner
 
-class Eu4hIntegrationTest {
+class Eu4HAssignTriggerTests {
 
     @BeforeEach
     fun setup() {
         Interpreter.missions.clear()
         Interpreter.triggers.clear()
+        Interpreter.effects.clear()
     }
 
     @Test
