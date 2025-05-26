@@ -20,6 +20,7 @@ class Interpreter {
     companion object {
         val missions: MutableMap<String, MissionVal> = mutableMapOf()
         val triggers: MutableMap<String, TriggerDef> = mutableMapOf()
+        val effects: MutableMap<String, EffectDef> = mutableMapOf()
 
         fun evalStmt(stmt: Stmt, envV: EnvV): Unit {
             when (stmt) {
@@ -163,14 +164,14 @@ class Interpreter {
                 }
 
                 is CreateEffect -> {
-                    if (triggers.containsKey(stmt.name)) {
+                    if (effects.containsKey(stmt.name)) {
                         error("Effect '${stmt.name}' already exists.")
                     }
-                    triggers[stmt.name] = TriggerDef(stmt.scope, stmt.type)
+                    effects[stmt.name] = TriggerDef(stmt.scope, stmt.type)
                 }
 
                 is AssignEffect -> {
-                    val effect = triggers[stmt.effectName] ?: error("Effect '${stmt.effectName}' not found.")
+                    val effect = effects[stmt.effectName] ?: error("Effect '${stmt.effectName}' not found.")
                     val mission = missions[stmt.missionName] ?: error("Mission '${stmt.missionName}' not found.")
                     val value = evalExpr(stmt.expr, envV)
                     // Type check
