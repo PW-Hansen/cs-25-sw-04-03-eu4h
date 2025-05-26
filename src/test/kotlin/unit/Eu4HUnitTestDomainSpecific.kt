@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.sw_08.eu4h.abstract_syntax.*
 import org.sw_08.eu4h.interpretation.*
 
