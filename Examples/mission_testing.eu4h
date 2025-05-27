@@ -8,14 +8,14 @@ print(my_mission.triggerScopeStack);
 
 logical my_logical = NOT;
 
-create_trigger = (province, "artillery_in_province", int);
-assign_trigger = (my_mission, "artillery_in_province", 10);
-open_scope = (my_mission, "trigger", paris);
+create_trigger(province, "artillery_in_province", int);
+assign_trigger(my_mission, "artillery_in_province", 10);
+open_scope(my_mission, "trigger", paris);
 print(my_mission.triggerScopeStack);
-assign_trigger = (my_mission, "artillery_in_province", 10);
-close_scope = (my_mission, "trigger");
+assign_trigger(my_mission, "artillery_in_province", 10);
+close_scope(my_mission, "trigger");
 
-create_effect = (country, "add_adm_power", int);
-assign_effect = (my_mission, "add_adm_power", -100);
+create_effect(country, "add_adm_power", int);
+assign_effect(my_mission, "add_adm_power", -100);
 
 print(my_mission);
