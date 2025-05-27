@@ -1,5 +1,12 @@
 
-array test = 2;
+array test = [2, 3, 4];
 
 print(test);
 
+push(test, 4);
+print(test);
+push(test, 5);
+print(test);
+pop(test);
+print(test);
+print(test.length);

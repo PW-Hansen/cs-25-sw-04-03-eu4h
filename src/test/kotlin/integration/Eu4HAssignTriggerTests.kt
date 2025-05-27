@@ -64,6 +64,7 @@ class Eu4HAssignTriggerTests {
         }
         assertTrue(exception.message!!.contains("Trigger 'missing_trigger' not found"))
     }
+
     @Test
     fun testAssignTriggerFailsIfWrongInputType() {
         // Set up a mission and a trigger expecting an Int, but pass a String

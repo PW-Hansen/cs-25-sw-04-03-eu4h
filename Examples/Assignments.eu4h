@@ -13,22 +13,6 @@ print(test);
 test = test + "ing for concatenation";
 print(test);
 
-country france = @FRA;
-print(france);
-
-province paris = @151;
-print(paris);
-
-mission my_mission = @ "this_is_my_mission" 3;
-print(my_mission);
-
-mission my_other_mission = @ "this_is_my_other_mission";
-print(my_other_mission);
-
 print b; // assigned
 
 print i + i; // Assigned
-
-create_trigger = (province, "artillery_in_province", int);
-assign_trigger = (my_mission, "artillery_in_province", 10);
-print x;
