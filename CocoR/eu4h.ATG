@@ -202,16 +202,16 @@ Type<out Type type>   (. type = null; .)
 
 /*------------------------------------------------------------------------*/
 Expr<out Expr expr>
-    = EqExpr<out expr>
+    = AndExpr<out expr>
     { "||"                 (. int lineNumber = t.line; .)
-    EqExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.OR, expr, expr2, lineNumber); .)
+    AndExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.OR, expr, expr2, lineNumber); .)
     }
 .
 
-Expr<out Expr expr>
-    = AndExpr<out expr>
+AndExpr<out Expr expr>
+    = EqExpr<out expr>
     { "&&"                 (. int lineNumber = t.line; .)
-    AndExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.AND, expr, expr2, lineNumber); .)
+    EqExpr<out Expr expr2> (. expr = new BinaryOp(BinaryOperators.AND, expr, expr2, lineNumber); .)
     }
 .
 
